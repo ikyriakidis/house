@@ -622,6 +622,100 @@ function umbrella() {
   return g;
 }
 
+/* systems-patch-1 */
+// ---------- Vehicles: BMW X7, BMW 1 Series (F20), small motorcycle, at their real dimensions ----------
+mat.x7 = new THREE.MeshPhysicalMaterial({ color: 0x1b1d22, metalness: 0.6, roughness: 0.3, clearcoat: 1, clearcoatRoughness: 0.05 });
+mat.f20 = new THREE.MeshPhysicalMaterial({ color: 0x1f4f9e, metalness: 0.55, roughness: 0.3, clearcoat: 1, clearcoatRoughness: 0.05 });
+mat.moto = new THREE.MeshPhysicalMaterial({ color: 0xb3261e, metalness: 0.3, roughness: 0.35, clearcoat: 1, clearcoatRoughness: 0.08 });
+mat.plate = M(0xf2f2ee, { roughness: 0.5 });
+// side profile [length, height] extruded across the car's width
+function extrudeProfile(pts, width, material, bevel) {
+  const sh = new THREE.Shape();
+  pts.forEach(([z, y], i) => i ? sh.lineTo(z, y) : sh.moveTo(z, y));
+  const geo = new THREE.ExtrudeGeometry(sh, { depth: width, steps: 1, bevelEnabled: bevel > 0, bevelThickness: bevel, bevelSize: bevel, bevelSegments: 3 });
+  geo.translate(0, 0, -width / 2); geo.rotateY(-Math.PI / 2);
+  const m = new THREE.Mesh(geo, material); m.castShadow = true; m.receiveShadow = true; return m;
+}
+function vehicle(s) {
+  const g = new THREE.Group(), hw = s.W / 2;
+  g.add(extrudeProfile(s.body, s.W - 0.08, s.paint, 0.04));
+  g.add(extrudeProfile(s.screens, s.W - 0.24, mat.carGlass, 0));
+  g.add(extrudeProfile(s.side, s.W + 0.01, mat.carGlass, 0));
+  s.axles.forEach(z => [-1, 1].forEach(k => {
+    const t = cy(g, k * s.track / 2, s.r, z, s.r, s.r, s.tw, mat.tyre, 24); t.rotation.z = Math.PI / 2;
+    const r = cy(g, k * (s.track / 2 + s.tw / 2 + 0.004), s.r, z, s.r * 0.62, s.r * 0.62, 0.02, mat.rim, 18); r.rotation.z = Math.PI / 2;
+  }));
+  const front = s.L / 2 + 0.005, rear = -s.L / 2 - 0.005;
+  [-1, 1].forEach(k => {
+    lb(g, k * (hw - 0.3), s.headY, front, s.headW, 0.07, 0.02, mat.headlight, false);
+    lb(g, k * (hw - 0.24), s.tailY, rear, 0.34, 0.08, 0.02, mat.taillight, false);
+    lb(g, k * (s.kidney[0] / 2 + 0.02), s.kidney[2], front + 0.004, s.kidney[0], s.kidney[1], 0.02, mat.black, false);
+    lb(g, k * (hw + 0.09), s.mirror[0], s.mirror[1], 0.16, 0.11, 0.08, s.paint);
+  });
+  lb(g, 0, s.plateY, front + 0.006, 0.52, 0.11, 0.01, mat.plate, false);
+  lb(g, 0, s.plateY + 0.2, rear - 0.006, 0.52, 0.11, 0.01, mat.plate, false);
+  if (s.rails) [-1, 1].forEach(k => lb(g, k * (hw - 0.2), s.H + 0.02, s.rails[0], 0.04, 0.04, s.rails[1], mat.steel));
+  return g;
+}
+// BMW X7 (G07): 5.15 × 2.00 × 1.80 m, wheelbase 3.105 m
+const BMW_X7 = { L: 5.15, W: 2.0, H: 1.80, paint: mat.x7, r: 0.40, tw: 0.28, track: 1.70, axles: [1.625, -1.48],
+  body: [[-2.535, 0.42], [2.535, 0.42], [2.535, 0.98], [2.43, 1.08], [1.70, 1.18], [1.0, 1.76], [-2.22, 1.76], [-2.37, 1.71], [-2.47, 1.15], [-2.535, 1.05]],
+  screens: [[-2.529, 1.161], [-2.429, 1.721], [1.038, 1.806], [1.738, 1.226], [1.6, 1.2], [-2.45, 1.2]],
+  side: [[-2.33, 1.21], [-2.26, 1.68], [0.97, 1.68], [1.6, 1.23]],
+  headY: 0.95, headW: 0.3, tailY: 1.05, kidney: [0.36, 0.30, 0.78], mirror: [1.25, 1.55], plateY: 0.55, rails: [-0.65, 3.0] };
+// BMW 1 Series (F20): 4.32 × 1.77 × 1.42 m, wheelbase 2.69 m
+const BMW_F20 = { L: 4.32, W: 1.765, H: 1.42, paint: mat.f20, r: 0.32, tw: 0.22, track: 1.53, axles: [1.43, -1.26],
+  body: [[-2.12, 0.34], [2.12, 0.34], [2.12, 0.70], [1.98, 0.81], [0.93, 0.97], [0.15, 1.38], [-1.70, 1.38], [-1.84, 1.35], [-2.02, 1.0], [-2.08, 0.95], [-2.12, 0.86]],
+  screens: [[-2.073, 1.027], [-1.893, 1.377], [0.178, 1.433], [0.958, 1.023], [0.85, 0.99], [-1.95, 0.99]],
+  side: [[-1.78, 1.04], [-1.68, 1.33], [0.12, 1.33], [0.84, 1.03]],
+  headY: 0.76, headW: 0.38, tailY: 0.92, kidney: [0.17, 0.12, 0.70], mirror: [1.0, 0.85], plateY: 0.5 };
+function motorbike() {
+  const g = new THREE.Group();
+  [0.68, -0.68].forEach(z => {
+    const t = cy(g, 0, 0.3, z, 0.3, 0.3, 0.1, mat.tyre, 22); t.rotation.z = Math.PI / 2;
+    const r = cy(g, 0, 0.3, z, 0.19, 0.19, 0.11, mat.rim, 16); r.rotation.z = Math.PI / 2;
+  });
+  lb(g, 0, 0.45, -0.05, 0.26, 0.32, 0.55, mat.black);
+  lb(g, 0, 0.82, 0.12, 0.3, 0.2, 0.5, mat.moto);
+  lb(g, 0, 0.8, -0.42, 0.26, 0.08, 0.6, mat.black);
+  lb(g, 0, 0.74, -0.8, 0.2, 0.06, 0.35, mat.moto);
+  const fork = lb(g, 0, 0.62, 0.56, 0.07, 0.68, 0.07, mat.steel); fork.rotation.x = 0.35;
+  lb(g, 0, 1.03, 0.45, 0.72, 0.03, 0.03, mat.black);
+  lb(g, 0, 0.92, 0.67, 0.16, 0.14, 0.08, mat.headlight);
+  const ex = cy(g, 0.17, 0.38, -0.45, 0.045, 0.05, 0.7, mat.steel, 10); ex.rotation.x = Math.PI / 2 - 0.15;
+  g.rotation.z = 0.06; // resting on its side stand
+  return g;
+}
+// ---------- Kitchen fridge-freezer pair and building systems ----------
+function fridgePair() {
+  const g = new THREE.Group();
+  [-0.3, 0.3].forEach((x, i) => {
+    lb(g, x, 1.0, 0, 0.59, 2.0, 0.66, mat.steel);
+    lb(g, x + (i ? -0.24 : 0.24), 1.1, 0.345, 0.025, 0.9, 0.03, mat.black, false);
+  });
+  lb(g, -0.3, 1.45, 0.335, 0.16, 0.24, 0.01, mat.screen, false);
+  lb(g, 0, 2.17, -0.02, 1.2, 0.3, 0.62, mat.cabinet);
+  return g;
+}
+function acIndoor() { const g = new THREE.Group(); lb(g, 0, 2.38, 0.12, 0.9, 0.3, 0.22, mat.white); lb(g, 0, 2.27, 0.235, 0.8, 0.03, 0.01, mat.frame, false); return g; }
+function acOutdoor() {
+  const g = new THREE.Group();
+  lb(g, 0, 0.06, 0, 0.8, 0.1, 0.42, mat.frame); lb(g, 0, 0.46, 0, 0.85, 0.7, 0.33, mat.white);
+  const f = cy(g, -0.12, 0.46, 0.17, 0.23, 0.23, 0.02, mat.frame, 20); f.rotation.x = Math.PI / 2;
+  return g;
+}
+function heatPump() {
+  const g = new THREE.Group();
+  lb(g, 0, 0.05, 0, 1.3, 0.1, 0.65, mat.concrete); lb(g, 0, 0.78, 0, 1.1, 1.36, 0.45, mat.white);
+  [0.5, 1.08].forEach(y => { const f = cy(g, 0, y, 0.23, 0.24, 0.24, 0.02, mat.frame, 22); f.rotation.x = Math.PI / 2; });
+  return g;
+}
+function cylinder() {
+  const g = new THREE.Group();
+  cy(g, 0, 0.88, 0, 0.3, 0.3, 1.72, mat.white, 24); cy(g, 0, 1.76, 0, 0.27, 0.3, 0.06, mat.white, 24);
+  lb(g, 0, 2.05, 0, 0.04, 0.5, 0.04, mat.steel); lb(g, 0.12, 2.05, 0, 0.04, 0.5, 0.04, mat.terracotta);
+  return g;
+}
 // ---------- Furnish the rooms ----------
 // Kids' rooms
 place(bed(0.9, 2.0, mat.duvetBlue), 1.08, 3.3, 90);
@@ -654,7 +748,7 @@ place(washer(), 11.95, 8.27, 0); place(washer(), 12.6, 8.27, 0);
 place(kitchenRun(2.4), 11.7, 6.82, 180);
 // Kitchen: no outside door any more, tall units run along the whole south wall
 place(kitchenRun(3.4, { uppers: true, hob: 0.2 }), 5.22, 10.5, 90);
-place(tallUnits(2.9, 0.8), 7.9, 8.93, 180);
+place(tallUnits(1.7), 8.5, 8.93, 180); place(fridgePair(), 6.98, 8.95, 180);
 place(island(2.6), 8.1, 10.8, 0);
 [7.1, 7.77, 8.43, 9.1].forEach(x => place(stool(), x, 11.65, 180));
 { const p = new THREE.Group(); [-0.8, 0, 0.8].forEach(x => pendant(p, x, 0)); place(p, 8.1, 10.8); }
@@ -687,11 +781,10 @@ place(wardrobe(2.4), 12.68, 13.7, -90); place(shelves(2.2, 2.2, 0.4), 11.22, 13.
 place(shower(1.9, 1.75), 12.0, 9.5); box(11.05, 10.38, 1.2, 0.03, 2.0, 0.03, mat.glass, { group: furn, cast: false });
 place(vanity(1.2), 12.74, 11.7, -90); place(wcPan(), 11.28, 11.0, 90);
 // Garage: two cars nose-out, shelving
-place(car(mat.carBlue), 8.75, 3.45, 0); place(car(mat.carSilver), 11.6, 3.45, 0);
+place(vehicle(BMW_F20), 8.65, 2.6, 0); place(vehicle(BMW_X7), 11.3, 2.925, 0);
 place(shelves(3.4, 2.0, 0.45), 11.2, 6.25, 0);
-place(shelves(2.2, 2.0, 0.45), 8.2, 8.35, 0);                                       // storage bay (old mudroom)
-{ const bike = new THREE.Group(); [-0.5, 0.5].forEach(z => { const w = cy(bike, 0, 0.35, z, 0.34, 0.34, 0.04, mat.tyre, 20); w.rotation.z = Math.PI / 2; });
-  lb(bike, 0, 0.62, 0, 0.04, 0.05, 0.9, mat.carBlue); lb(bike, 0, 0.85, -0.25, 0.2, 0.04, 0.08, mat.black); place(bike, 9.05, 7.3, 0); }
+place(shelves(1.1, 2.0, 0.45), 7.6, 8.35, 0);                                       // storage bay (old mudroom)
+place(motorbike(), 8.75, 7.55, 180);
 // Terrace and pool
 place(table(2.2, 1.0, mat.darkWood), 10.9, 20.6);
 [10.2, 10.9, 11.6].forEach(x => { place(chair(mat.darkWood), x, 21.35, 180); place(chair(mat.darkWood), x, 19.85, 0); });
@@ -730,6 +823,38 @@ place(wcPan(), 3.0, 33.72, 0); { const v = vanity(0.6); place(v, 3.65, 33.75, 0)
 place(shelves(1.2, 2.0, 0.4), 4.8, 33.75, 0);
 { const s = new THREE.Group(); cy(s, 0, 1.1, 0, 0.03, 0.03, 2.2, mat.steel, 8); lb(s, 0, 2.2, 0.15, 0.25, 0.03, 0.25, mat.steel); lb(s, 0, 0.01, 0.1, 0.8, 0.02, 0.8, mat.stoneDark, false); place(s, 2.2, 32.6, 0); }
 place(plant(1.2, mat.leafOlive), 10.3, 34.2);
+
+// ---------- Building systems: heat pump, hot-water cylinder, AC units, and their callouts ----------
+const CYL = [9.8,6.95], FRIDGE = [6.98,8.95];
+place(heatPump(), 13.42, 7.45, 90);
+place(cylinder(), CYL[0], CYL[1], 0);
+place(acOutdoor(), 13.35, 3.2, 90); place(acOutdoor(), 13.35, 4.4, 90);
+const AC_IN = [[8.88, 17.0, -90], [2.6, 14.62, 180], [1.8, 3.88, 0], [1.8, 7.88, 0], [9.12, 17.6, 90]];
+AC_IN.forEach(([x, y, r]) => place(acIndoor(), x, y, r));
+const sysGroup = new THREE.Group(); sysGroup.visible = false; scene.add(sysGroup);
+const leaderMat = new THREE.LineBasicMaterial({ color: 0x1e292c, depthTest: false, transparent: true });
+function sysTag(text, x, y, from, to, size = 0.5) {
+  const c = document.createElement("canvas"), g = c.getContext("2d"), fs = 40;
+  g.font = "600 " + fs + "px 'Instrument Sans', 'Segoe UI', sans-serif";
+  c.width = Math.ceil(g.measureText(text).width + 44); c.height = fs + 20;
+  g.font = "600 " + fs + "px 'Instrument Sans', 'Segoe UI', sans-serif";
+  g.fillStyle = "rgba(30,41,44,0.92)"; g.fillRect(0, 0, c.width, c.height);
+  g.fillStyle = "#e58a63"; g.fillRect(0, 0, 10, c.height);
+  g.fillStyle = "#fbfcfa"; g.textBaseline = "middle"; g.fillText(text, 26, c.height / 2 + 1);
+  const tex = new THREE.CanvasTexture(c); tex.encoding = THREE.sRGBEncoding;
+  const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, depthTest: false, transparent: true }));
+  s.scale.set(size * c.width / c.height, size, 1); s.position.set(x, to, -y); s.renderOrder = 14; sysGroup.add(s);
+  const l = new THREE.Line(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(x, from, -y), new THREE.Vector3(x, to - size / 2, -y)]), leaderMat);
+  l.renderOrder = 13; sysGroup.add(l);
+}
+sysTag("Solar batteries + inverter", 0.3, 11.1, 1.3, 4.3);
+sysTag("Server rack", 2.3, 12.0, 2.0, 3.4, 0.42);
+sysTag("Heat pump (αντλία θερμότητας)", 13.42, 7.45, 1.45, 3.3);
+sysTag("Hot-water cylinder", CYL[0], CYL[1], 1.8, 4.0, 0.42);
+sysTag("AC outdoor units", 13.35, 3.8, 0.85, 2.5);
+sysTag("Freezer + fridge", FRIDGE[0], FRIDGE[1], 2.3, 3.4, 0.42);
+sysTag("Solar panels on the roof", 3.4, 2.7, 3.9, 5.4);
+AC_IN.forEach(([x, y]) => sysTag("AC", x, y, 2.5, 3.05, 0.36));
 
 // ---------- Trees, neighbours ----------
 function olive(x, y, s = 1) {
@@ -980,6 +1105,7 @@ const TOGGLES = {
   furniture: { label: "Furniture", on: true, apply: v => { furn.visible = v; } },
   labels: { label: "Labels", on: false, apply: v => { labels.visible = v; } },
   dims: { label: "Dimensions", on: false, apply: v => { dimGroup.visible = v; if (v) { setRoof("off"); setView("top"); } } },
+  systems: { label: "Tech & energy", on: false, apply: v => { sysGroup.visible = v; if (v) setView("aerial"); } },
 };
 function toggle(k) { const t = TOGGLES[k]; t.on = !t.on; t.apply(t.on); document.getElementById("toggles-" + k).setAttribute("aria-pressed", String(t.on)); }
 chips("views", VIEWS, setView);
