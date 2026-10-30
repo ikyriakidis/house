@@ -2,6 +2,18 @@
 // and the root plan.html / 3d.html always hold the newest one.
 window.HOUSE_VERSIONS = [
   {
+    id: "v7",
+    date: "2026-10-30",
+    title: "Χελώνα, composite structure",
+    hasElectrical: true,
+    changes: [
+      "Χελώνα (utility connection box) in the front wall: the ΔΕΔΔΗΕ electricity meter and the fibre-internet termination arrive together; power runs to the main panel and fibre to the rack.",
+      "Structure layer for the composite construction (σύμμικτη κατασκευή): RC footings, slab and columns, steel beams, a composite steel-deck roof slab, steel lintels over the big openings, steel pergola and clerestory frames.",
+      "Outdoor wall lights renamed to wall lights (απλίκες) on the plan and electrical drawing.",
+      "Also in every version: architectural drawing style for the plans, solar batteries always shown, and a pool plant-room view in 3D (v5 onwards)."
+    ]
+  },
+  {
     id: "v6",
     date: "2026-10-30",
     title: "Pool beside the terrace, bioclimatic pergola",

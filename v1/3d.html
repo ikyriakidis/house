@@ -727,7 +727,16 @@ place(desk(1.2, 0.6), 1.7, 4.42, 180); place(chair(mat.white), 1.7, 5.0, 0);
 place(wardrobe(1.3), 3.08, 7.25, -90); place(rug(1.6, 1.2, mat.rugC), 1.6, 5.8);
 // Storage and tech room
 place(shelves(3.2, 2.1, 0.45), 1.7, 9.75, 0); place(shelves(1.6, 2.1, 0.4), 0.22, 8.9, 90);
-for (let i = 0; i < 3; i++) { const b = new THREE.Group(); lb(b, 0, 0.75, 0, 0.55, 1.1, 0.2, mat.battery); lb(b, 0, 1.22, 0.101, 0.12, 0.03, 0.002, mat.duvetGreen, false); place(b, 0.13, 10.5 + i * 0.62, 90); }
+/* battery-patch-1 */ // solar battery cabinets (3 × 5 kWh) on the tech-room west wall, with status LEDs and a label plate
+mat.batBody = M(0x2e353b, { roughness: 0.45, metalness: 0.2 }); mat.batFace = M(0xe4e8ea, { roughness: 0.35 });
+mat.batLed = new THREE.MeshStandardMaterial({ color: 0x38d27a, emissive: 0x22c065, emissiveIntensity: 1.2 });
+for (let i = 0; i < 3; i++) {
+  const b = new THREE.Group();
+  lb(b, 0, 0.78, 0, 0.56, 1.3, 0.24, mat.batBody); lb(b, 0, 0.82, 0.121, 0.5, 1.12, 0.004, mat.batFace, false);
+  for (let k = 0; k < 4; k++) lb(b, -0.12 + k * 0.08, 1.24, 0.125, 0.05, 0.015, 0.004, mat.batLed, false);
+  lb(b, 0, 0.5, 0.125, 0.3, 0.08, 0.004, mat.batBody, false);
+  place(b, 0.15, 10.45 + i * 0.62, 90);
+}
 { const r = new THREE.Group(); lb(r, 0, 1.0, 0, 0.6, 2.0, 1.0, mat.black); for (let k = 0; k < 8; k++) lb(r, 0, 0.4 + k * 0.18, 0.501, 0.5, 0.1, 0.002, k % 3 ? mat.steel : mat.duvetGreen, false); place(r, 2.3, 12.0, 180); }
 { const inv = new THREE.Group(); lb(inv, 0, 1.4, 0, 0.5, 0.6, 0.18, mat.white); place(inv, 1.2, 10.12, 0); }
 // Office: two desks along the east wall, facing it
@@ -971,6 +980,7 @@ function buildLabels() {
   while (labels.children.length) { const s = labels.children.pop(); s.material.map.dispose(); s.material.dispose(); }
   ROOMS.forEach(rm => { if (!rm.name) return; const [x, y, w, d] = rm.r[0]; makeLabel(rm.name, x + w / 2, y + d / 2); });
   makeLabel("Pool", px + pw / 2, py + pd / 2, 1.2);
+  makeLabel("Solar batteries 15 kWh", 0.9, 11.1, 2.4);
   makeLabel("Pool WC", 3.3, 33.1, 3.3); makeLabel("BBQ store", 4.9, 33.1, 3.9); makeLabel("BBQ", 7.8, 32.6, 3.3);
 }
 buildLabels();

@@ -735,7 +735,16 @@ place(desk(1.2, 0.6), 1.7, 4.42, 180); place(chair(mat.white), 1.7, 5.0, 0);
 place(wardrobe(1.3), 3.08, 7.25, -90); place(rug(1.6, 1.2, mat.rugC), 1.6, 5.8);
 // Storage and tech room
 place(shelves(3.2, 2.1, 0.45), 1.7, 9.75, 0); place(shelves(1.6, 2.1, 0.4), 0.22, 8.9, 90);
-for (let i = 0; i < 3; i++) { const b = new THREE.Group(); lb(b, 0, 0.75, 0, 0.55, 1.1, 0.2, mat.battery); lb(b, 0, 1.22, 0.101, 0.12, 0.03, 0.002, mat.duvetGreen, false); place(b, 0.13, 10.5 + i * 0.62, 90); }
+/* battery-patch-1 */ // solar battery cabinets (3 × 5 kWh) on the tech-room west wall, with status LEDs and a label plate
+mat.batBody = M(0x2e353b, { roughness: 0.45, metalness: 0.2 }); mat.batFace = M(0xe4e8ea, { roughness: 0.35 });
+mat.batLed = new THREE.MeshStandardMaterial({ color: 0x38d27a, emissive: 0x22c065, emissiveIntensity: 1.2 });
+for (let i = 0; i < 3; i++) {
+  const b = new THREE.Group();
+  lb(b, 0, 0.78, 0, 0.56, 1.3, 0.24, mat.batBody); lb(b, 0, 0.82, 0.121, 0.5, 1.12, 0.004, mat.batFace, false);
+  for (let k = 0; k < 4; k++) lb(b, -0.12 + k * 0.08, 1.24, 0.125, 0.05, 0.015, 0.004, mat.batLed, false);
+  lb(b, 0, 0.5, 0.125, 0.3, 0.08, 0.004, mat.batBody, false);
+  place(b, 0.15, 10.45 + i * 0.62, 90);
+}
 { const r = new THREE.Group(); lb(r, 0, 1.0, 0, 0.6, 2.0, 1.0, mat.black); for (let k = 0; k < 8; k++) lb(r, 0, 0.4 + k * 0.18, 0.501, 0.5, 0.1, 0.002, k % 3 ? mat.steel : mat.duvetGreen, false); place(r, 2.3, 12.0, 180); }
 { const inv = new THREE.Group(); lb(inv, 0, 1.4, 0, 0.5, 0.6, 0.18, mat.white); place(inv, 1.2, 10.12, 0); }
 // Office: two desks along the east wall, facing it
@@ -842,6 +851,15 @@ place(shelves(1.2, 2.0, 0.4), 4.8, 33.75, 0);
 { const p = new THREE.Group(); lb(p, 0, 0.2, 0, 0.5, 0.3, 0.3, mat.black); const m = cy(p, 0.2, 0.25, 0, 0.13, 0.13, 0.35, mat.steel, 14); m.rotation.z = Math.PI / 2; place(p, 1.75, 33.6, 0); }
 { const c = new THREE.Group(); lb(c, 0, 1.4, 0, 0.35, 0.45, 0.15, mat.white); lb(c, 0.45, 1.5, 0, 0.4, 0.55, 0.15, mat.frame); place(c, 1.6, 33.95, 0); }
 lb(scene, 2.2, 0.3, -32.9, 0.3, 0.6, 0.3, mat.cabinet);
+/* plant-view */ { const pl = new THREE.PointLight(0xffffff, 0.8, 4.5, 2); pl.position.set(1.4, 2.4, -33.1); scene.add(pl); }
+flat(0.4, 32.1, 2.0, 2.0, 0.04, mat.concrete);
+// for the plant-room view, hide everything of the pool house above wall height so you can look in
+let phHidden = null;
+function phRoof(hide) {
+  if (!phHidden) { phHidden = []; scene.traverse(o => { if (o.isMesh && o.position.y > 2.55 && o.position.y < 4.5 && o.position.x > -0.2 && o.position.x < 10.5 && o.position.z < -31.2 && o.position.z > -34.8) phHidden.push(o); }); }
+  phHidden.forEach(o => { o.visible = !hide; });
+}
+{ const hx = new THREE.Group(); const c = cy(hx, 0, 0.55, 0, 0.11, 0.11, 0.7, mat.steel, 14); c.rotation.z = Math.PI / 2; place(hx, 1.2, 33.95, 0); }
 place(plant(1.2, mat.leafOlive), 10.3, 34.2);
 
 // ---------- Building systems: heat pump, hot-water cylinder, AC units, and their callouts ----------
@@ -1104,6 +1122,7 @@ function buildLabels() {
   while (labels.children.length) { const s = labels.children.pop(); s.material.map.dispose(); s.material.dispose(); }
   ROOMS.forEach(rm => { if (!rm.name) return; const [x, y, w, d] = rm.r[0]; makeLabel(rm.name, x + w / 2, y + d / 2); });
   makeLabel("Pool", px + pw / 2, py + pd / 2, 1.2);
+  makeLabel("Solar batteries 15 kWh", 0.9, 11.1, 2.4);
   makeLabel("Pool WC", 3.3, 33.1, 3.3); makeLabel("Plant room", 1.4, 33.1, 3.9); makeLabel("BBQ store", 4.9, 33.1, 3.9); makeLabel("BBQ", 7.8, 32.6, 3.3);
 }
 buildLabels();
@@ -1189,6 +1208,7 @@ const VIEWS = {
   street: { label: "From the street", pos: [2.5, 1.7, 13], target: [7.5, 1.8, 0], note: "<b>From the street:</b> the low front wall, the garage with both cars, and the front door under its canopy." },
   foyer: { label: "Foyer", pos: [3.8, 1.6, -0.5], target: [6.5, 1.2, -1.6], note: "<b>Foyer:</b> the shared entrance. The front door is behind you, the door from the garage is ahead on the right, and the coat and shoe cupboard is on the left. Both ways in arrive here. Shopping has its own door from the garage straight into the pantry." },
   unload: { label: "Garage → pantry", pos: [9.3, 1.6, -8.1], target: [6.5, 1.05, -7.1], note: "<b>Garage → pantry:</b> standing in the storage bay at the back of the garage. The door ahead opens straight into the pantry, with a landing shelf beside it for the bags. The door to the foyer, for people, is at the front of the garage." },
+  plant: { label: "Pool plant room", pos: [1.45, 7.0, -31.2], target: [1.4, 0.2, -33.2], note: "<b>Pool plant room:</b> seen from above with the pool-house roof lifted off. Blue sand filter, circulation pump with its motor, heat exchanger on the north wall, salt chlorinator and controller beside it, and the pool sub-panel cabinet on the right. In the real build the floor sits about 1 m below the deck, under the water level of the balance tank." },
   living: { label: "Living room", pos: [8.6, 1.6, -13.4], target: [3.4, 1.2, -16.6], note: "<b>Living room:</b> from the kitchen island toward the west wall, with the 85\" TV and the fireplace side by side and the north glass on the right." },
   kitchen: { label: "Kitchen", pos: [3.9, 1.65, -14.3], target: [8.5, 1.0, -9.8], note: "<b>Kitchen:</b> from the reading corner: the island with four stools (there's no separate dining room), the cooktop run on the right, tall units and fridge behind, with the raised clerestory windows above." },
   bbq: { label: "BBQ & pool house", pos: [11.8, 1.7, -28.6], target: [5.8, 1.2, -33.2], note: "<b>BBQ & pool house:</b> at the garden end, looking north: the pool plant room with its louvred door, the pool WC and the BBQ store, then the covered outdoor kitchen with its masonry barbecue and chimney, and a table for 8. The outdoor shower stands at the east end of the pool deck, behind you." },
@@ -1209,7 +1229,7 @@ const SUNS = {
 let viewKey = "aerial", roofKey = "flat", sunKey = "equ";
 function press(groupId, k) { document.querySelectorAll(`#${groupId} button`).forEach(b => b.setAttribute("aria-pressed", String(b.dataset.k === k))); }
 function caption() { document.getElementById("caption").innerHTML = `${VIEWS[viewKey].note} ${ROOFS[roofKey].note} ${SUNS[sunKey].note}`; }
-function setView(k) { viewKey = k; const v = VIEWS[k]; camera.position.set(...v.pos); controls.target.set(...v.target); controls.update(); press("views", k); caption(); }
+function setView(k) { viewKey = k; const v = VIEWS[k]; phRoof(k === "plant"); camera.position.set(...v.pos); controls.target.set(...v.target); controls.update(); press("views", k); caption(); }
 function setRoof(k) {
   roofKey = k;
   roofFlat.visible = k === "flat"; roofTiled.visible = k === "tiled"; ceiling.visible = k !== "off";
