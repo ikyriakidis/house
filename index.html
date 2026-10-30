@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Split-Wing House</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=Instrument+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a short cover sheet — title block, two entry cards, key figures */
+:root {
+  --paper: #f2f4f1; --sheet: #fbfcfa; --ink: #1e292c; --ink-soft: #5b676a; --rule: #c9d0cc; --accent: #b5532f;
+  --f-display: "Archivo", "Arial Narrow", system-ui, sans-serif;
+  --f-body: "Instrument Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --paper: #151b1d; --sheet: #1b2326; --ink: #e3e9e6; --ink-soft: #9aa7a8; --rule: #34403f; --accent: #e58a63; color-scheme: dark; }
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; background: var(--paper); color: var(--ink); font: 15px/1.55 var(--f-body);
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 40px 56px;
+}
+main { max-width: 900px; margin: 0 auto; display: grid; gap: 28px; }
+h1 { font-family: var(--f-display); font-stretch: 72%; font-weight: 750; font-size: clamp(36px, 7vw, 64px); line-height: .95; margin: 0; letter-spacing: -0.01em; text-wrap: balance; }
+.lede { color: var(--ink-soft); max-width: 62ch; margin: 10px 0 0; }
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+a.card { display: grid; gap: 6px; padding: 20px; background: var(--sheet); border: 1px solid var(--rule); border-radius: 4px; color: inherit; text-decoration: none; }
+a.card:hover { border-color: var(--accent); }
+a.card:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.eyebrow { font-family: var(--f-display); font-stretch: 80%; text-transform: uppercase; letter-spacing: .1em; font-size: 11px; font-weight: 650; color: var(--accent); }
+.card h2 { font-family: var(--f-display); font-stretch: 75%; font-weight: 700; font-size: 28px; line-height: 1.05; margin: 0; }
+.card p { margin: 0; color: var(--ink-soft); }
+dl { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px 24px; margin: 0; padding-top: 20px; border-top: 1px solid var(--rule); }
+dt { font-family: var(--f-display); font-stretch: 80%; text-transform: uppercase; letter-spacing: .08em; font-size: 11px; color: var(--ink-soft); }
+dd { margin: 2px 0 0; font-family: var(--f-mono); font-size: 14px; font-variant-numeric: tabular-nums; }
+.note { font-size: 13px; color: var(--ink-soft); }
+</style>
+
+<main>
+  <header>
+    <h1>Split-Wing House</h1>
+    <p class="lede">Concept design for a single-storey family house on a 19 × 53 m plot, street on the south. Kids' rooms and garage on the street side; office, living room and master bedroom looking north across the garden to the pool.</p>
+  </header>
+
+  <div class="cards">
+    <a class="card" href="plan.html">
+      <span class="eyebrow">Interactive</span>
+      <h2>Floor plan</h2>
+      <p>Rooms with sizes and design notes, zones, movement routes, pool views, sun and shadow lines, and the site plan.</p>
+    </a>
+    <a class="card" href="3d.html">
+      <span class="eyebrow">Interactive</span>
+      <h2>3D model</h2>
+      <p>Furnished model you can orbit, with a flat or Greek tiled roof, solar panels, and sun positions through the year.</p>
+    </a>
+  </div>
+
+  <dl>
+    <div><dt>Plot</dt><dd>1,000 m² · 19 × 53 m</dd></div>
+    <div><dt>Heated area</dt><dd>209 m² (incl. walls)</dd></div>
+    <div><dt>Garage</dt><dd>39 m² · 2 cars</dd></div>
+    <div><dt>Pool</dt><dd>9 × 4 m</dd></div>
+    <div><dt>Bedrooms</dt><dd>Master + 2 kids</dd></div>
+    <div><dt>Storeys</dt><dd>1</dd></div>
+  </dl>
+
+  <p class="note">Concept sketch for discussion, not a construction drawing. Setbacks, coverage and building factor are assumptions to confirm with the engineer.</p>
+</main>
