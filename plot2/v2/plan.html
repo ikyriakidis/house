@@ -1,0 +1,356 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Plot 2 House Plan</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=Instrument+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: architectural sheet — whole plot (north turned 22°) on the left, inspector and schedule on the right; stacks on phones */
+:root {
+  --paper: #f2f4f1; --sheet: #fbfcfa; --ink: #1e292c; --ink-soft: #5b676a; --rule: #c9d0cc; --accent: #b5532f;
+  --water: #8ec5df; --glass: #4f86aa; --lawn: #e3eadc; --road: #d6d9d4; --tree: #b9caa8; --court: #efece4;
+  --f-display: "Archivo", "Arial Narrow", system-ui, sans-serif;
+  --f-body: "Instrument Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #151b1d; --sheet: #1b2326; --ink: #e3e9e6; --ink-soft: #9aa7a8; --rule: #34403f; --accent: #e58a63;
+    --water: #2f6f8f; --glass: #8cc0e0; --lawn: #1f2a24; --road: #2a3133; --tree: #34503a; --court: #232b2c; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #151b1d; --sheet: #1b2326; --ink: #e3e9e6; --ink-soft: #9aa7a8; --rule: #34403f; --accent: #e58a63;
+  --water: #2f6f8f; --glass: #8cc0e0; --lawn: #1f2a24; --road: #2a3133; --tree: #34503a; --court: #232b2c; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--paper); color: var(--ink); font-family: var(--f-body); font-size: 15px; line-height: 1.5;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 24px 40px; }
+.wrap { max-width: 1240px; margin: 0 auto; display: grid; gap: 20px; }
+header { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 12px 24px; }
+h1 { font-family: var(--f-display); font-stretch: 72%; font-weight: 750; font-size: clamp(30px, 5vw, 46px); line-height: 1; margin: 0; letter-spacing: -0.01em; }
+.sub { color: var(--ink-soft); margin: 6px 0 0; max-width: 68ch; }
+.sub a { color: var(--accent); }
+.meta { font-family: var(--f-mono); font-size: 12px; color: var(--ink-soft); display: grid; grid-template-columns: auto auto; gap: 2px 14px; }
+.meta b { color: var(--ink); font-weight: 500; }
+.grid { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 20px; align-items: start; }
+@media (max-width: 960px) { .grid { grid-template-columns: minmax(0, 1fr); } }
+.sheet { background: var(--sheet); border: 1px solid var(--rule); border-radius: 4px; min-width: 0; }
+.panel { padding: 16px 18px; }
+.panel h2 { font-family: var(--f-display); font-stretch: 75%; font-weight: 700; font-size: 26px; line-height: 1.05; margin: 2px 0 4px; }
+.eyebrow { font-family: var(--f-display); font-stretch: 80%; text-transform: uppercase; letter-spacing: .1em; font-size: 11px; font-weight: 650; color: var(--accent); }
+.dims { font-family: var(--f-mono); font-size: 13px; color: var(--ink-soft); }
+.panel p { margin: 10px 0 0; } .panel ul { margin: 10px 0 0; padding-left: 18px; } .panel li + li { margin-top: 4px; }
+.controls { display: flex; flex-wrap: wrap; gap: 8px 18px; padding: 12px 16px; border-bottom: 1px solid var(--rule); align-items: center; }
+.lab { font-family: var(--f-display); font-stretch: 80%; text-transform: uppercase; letter-spacing: .08em; font-size: 12px; font-weight: 650; color: var(--ink-soft); }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+button.chip { font: 500 13px var(--f-body); color: var(--ink); background: transparent; border: 1px solid var(--rule); border-radius: 999px; padding: 4px 11px; cursor: pointer; }
+button.chip[aria-pressed="true"] { background: var(--ink); color: var(--sheet); border-color: var(--ink); }
+button:focus-visible, .room:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.plan-box { overflow-x: auto; display: flex; justify-content: center; }
+svg#plan { display: block; width: 100%; max-width: 700px; min-width: 440px; height: auto; }
+.note { padding: 10px 16px; border-top: 1px solid var(--rule); font-size: 13.5px; color: var(--ink-soft); min-height: 44px; }
+.note b { color: var(--ink); }
+table.sched { width: 100%; border-collapse: collapse; font-size: 13px; font-variant-numeric: tabular-nums; }
+table.sched td { padding: 4px 0; border-bottom: 1px solid var(--rule); }
+table.sched td:last-child { text-align: right; font-family: var(--f-mono); font-size: 12px; }
+table.sched tr { cursor: pointer; } table.sched tr:hover td { color: var(--accent); }
+table.sched tr.total td { font-weight: 600; border-bottom: 0; cursor: default; color: var(--ink); }
+.qs { margin: 8px 0 0; padding-left: 18px; font-size: 13.5px; color: var(--ink-soft); }
+.qs li + li { margin-top: 6px; }
+.room rect { fill: var(--sheet); stroke: none; cursor: pointer; }
+.room.wet rect { fill: url(#tile); }
+.room:hover rect, .room.sel rect { stroke: var(--accent); stroke-width: 2; }
+.rn { font-family: var(--f-display); font-stretch: 78%; font-weight: 650; font-size: 9.5px; fill: var(--ink); text-transform: uppercase; letter-spacing: .03em; pointer-events: none; paint-order: stroke; stroke: var(--sheet); stroke-width: 3px; }
+.ra { font-family: var(--f-mono); font-size: 8.5px; fill: var(--ink-soft); pointer-events: none; paint-order: stroke; stroke: var(--sheet); stroke-width: 3px; }
+.anno { font-family: var(--f-display); font-stretch: 80%; font-size: 10.5px; letter-spacing: .12em; text-transform: uppercase; fill: var(--ink-soft); }
+.small { font-family: var(--f-mono); font-size: 8.5px; fill: var(--ink-soft); }
+.wallp { fill: var(--ink); }
+.glz { stroke: var(--ink); stroke-width: .7; }
+.leaf { stroke: var(--ink); stroke-width: 1.3; }
+.arc { fill: none; stroke: var(--ink-soft); stroke-width: .55; }
+.fx { fill: var(--sheet); stroke: var(--ink); stroke-width: .6; }
+.fxl { fill: none; stroke: var(--ink); stroke-width: .5; }
+.fxa { fill: color-mix(in srgb, var(--accent) 25%, var(--sheet)); stroke: var(--accent); stroke-width: 1; }
+.fxt { font-family: var(--f-mono); font-size: 7.5px; fill: var(--accent); paint-order: stroke; stroke: var(--sheet); stroke-width: 3px; }
+.car { fill: none; stroke: var(--ink); stroke-width: .8; stroke-dasharray: 4 2; }
+.route { fill: none; stroke: var(--accent); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 7 6; }
+@media (prefers-reduced-motion: no-preference) { .route { animation: march 1.2s linear infinite; } }
+@keyframes march { to { stroke-dashoffset: -13; } }
+.dimg line { stroke: var(--accent); stroke-width: 1; }
+.dimg text { font-family: var(--f-mono); font-size: 8.5px; fill: var(--accent); paint-order: stroke; stroke: var(--sheet); stroke-width: 3px; }
+</style>
+
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Plot 2 House Plan · v2</h1>
+      <p class="sub">Plot 2, opposite the community office: an L-shaped single-storey house around a private courtyard with the pool. The front door comes in from the south road through the olive garden, the garage from the east road, and the bedrooms run along the neighbour's side with the master suite on its own at the far end. Click any room or route. <a href="3d.html" style="color:var(--accent)">Open the 3D model</a> · <a href="../v1/plan.html" style="color:var(--accent)">Plot 2 v1</a> · <a href="../../index.html" style="color:var(--accent)">Home</a></p>
+    </div>
+    <div class="meta">
+      <span>Plot</span><b>≈1,100 m² · 21.3 × 51.6 m</b>
+      <span>Roads</span><b>north, east and south</b>
+      <span>Heated area</span><b id="m-net">—</b>
+      <span>Garage</span><b>42 m² · X7 + F20</b>
+      <span>Status</span><b>Concept v2 · working dimensions</b>
+    </div>
+  </header>
+
+  <div class="grid">
+    <section class="sheet">
+      <div class="controls">
+        <span class="lab">Routes</span><div class="chips" id="routeChips"></div>
+        <span class="lab">Show</span><div class="chips"><button class="chip" id="show-dims" aria-pressed="false">Dimensions</button></div>
+      </div>
+      <div class="plan-box"><svg id="plan" viewBox="0 0 560 1170" role="img" aria-label="Plot 2 v2 site and floor plan"></svg></div>
+      <div class="note" id="note">Pick a route to trace how people and cars move through the plot.</div>
+    </section>
+    <aside style="display:grid;gap:20px">
+      <section class="sheet panel" id="insp"></section>
+      <section class="sheet panel">
+        <div class="eyebrow">What changed from v1</div>
+        <ul class="qs">
+          <li>L-shaped house wrapped round a private courtyard with the pool, closed to the east road by a 2.2 m wall and to the north by the pool house.</li>
+          <li>Front door from the south road; garage from the east road.</li>
+          <li>Master suite on its own at the north end of the bedroom wing, kitchen facing the courtyard, office beside the front door.</li>
+          <li>New guest room with its own shower. The heated area rises to about 216 m².</li>
+        </ul>
+        <div class="eyebrow" style="margin-top:14px">To confirm</div>
+        <ul class="qs">
+          <li><b>Working dimensions:</b> 21.3 × 51.6 m, long side 22° east of north, estimated from the aerial photo.</li>
+          <li>Building terms (σ.δ., κάλυψη, Δ, building line on each road). I assumed 3 m from the neighbour and the east road.</li>
+          <li>The garage door faces the east road across only 3 m of setback: check the road width allows the turn in.</li>
+        </ul>
+      </section>
+      <section class="sheet panel">
+        <div class="eyebrow">Room schedule (incl. walls)</div>
+        <table class="sched" id="sched"></table>
+      </section>
+    </aside>
+  </div>
+</div>
+
+<script>
+// Plot coordinates in metres: x east from the west setback line (plot boundary at -3, east road boundary at 18.3),
+// y north (south road boundary at -25, north road boundary at 26.6). The plot's long axis points 22° east of north.
+const S = 18, PX0 = -3, PX1 = 18.3, PY0 = -25, PY1 = 26.6, ROT = 22;
+const OX = 60 - PX0 * S, YTOP = 32.2;
+const X = m => OX + m * S, Y = m => 24 + (YTOP - m) * S;
+const svg = document.getElementById("plan"), NS = "http://www.w3.org/2000/svg";
+const el = (t, a = {}, p = svg) => { const n = document.createElementNS(NS, t); for (const k in a) n.setAttribute(k, a[k]); p.appendChild(n); return n; };
+const RA = (x, y, w, h) => ({ x: X(x), y: Y(y + h), width: w * S, height: h * S });
+const txt = (x, y, s, cls, extra = {}, p = svg) => { const t = el("text", { x, y, class: cls, ...extra }, p); t.textContent = s; return t; };
+
+const ROOMS = [
+  { id: "office", name: "Office", r: [[0, -7.5, 3.6, 3.7]], note: "Beside the front door, separate from family life: two desks side by side on the north wall, south and west windows.", tips: [] },
+  { id: "gwc", name: "WC", wet: 1, r: [[0, -3.8, 1.8, 1.8]], note: "Guest WC off the foyer.", tips: [] },
+  { id: "coats", name: "Coats", r: [[1.8, -3.8, 1.8, 1.8]], note: "Coat and shoe cupboard off the foyer.", tips: [] },
+  { id: "foyer", name: "Foyer", r: [[3.6, -7.5, 3.0, 6.5], [0, -2.0, 3.6, 1.0]], note: "The front door from the south road opens here. The foyer is open to the living room on the east and leads into the bedroom corridor on the north-west.", tips: ["A covered porch outside the door."] },
+  { id: "living", name: "Living Room", r: [[6.6, -7.5, 4.8, 6.5]], note: "Living room fully glazed to the north onto the terrace, pergola and courtyard pool; TV and fireplace on the solid south wall.", tips: [] },
+  { id: "kitchen", name: "Kitchen", r: [[11.4, -5.0, 3.9, 4.0]], note: "Kitchen facing the courtyard, open to the living room, with the outdoor BBQ just outside the glass. Pantry and laundry behind it lead to the garage.", tips: ["Freezer + fridge on the east wall."] },
+  { id: "laundry", name: "Laundry", wet: 1, r: [[11.4, -7.5, 1.9, 2.5]], note: "Laundry with a door from the garage: the everyday family entrance.", tips: [] },
+  { id: "pantry", name: "Pantry", r: [[13.3, -7.5, 2.0, 2.5]], note: "Walk-in pantry with a door straight from the garage for unloading shopping.", tips: [] },
+  { id: "tech", name: "Tech", r: [[6.6, -10.5, 2.2, 3.0]], note: "Solar batteries (3 × 5 kWh), inverter, main panel and rack, with a door from the garage and its own outside door to the front court.", tips: [] },
+  { id: "garage", name: "Garage", garage: 1, r: [[8.8, -14.0, 6.5, 6.5]], note: "6.5 × 6.5 m garage opening east onto the east road, with the BMW X7 and the BMW 1 Series parked nose-out.", tips: [] },
+  { id: "corr", name: "", r: [[0, -1.0, 1.2, 14.0]], note: "Bedroom corridor along the neighbour's wall, lit by a long high window and roof lights.", tips: [] },
+  { id: "guest", name: "Guest Room", r: [[1.2, -1.0, 4.8, 3.4]], note: "Guest room with its own shower, nearest the front door; glazed to the courtyard.", tips: [] },
+  { id: "kid1", name: "Kid Bedroom 1", r: [[1.2, 2.4, 4.8, 3.2]], note: "Faces east onto the courtyard and gets the morning sun.", tips: [] },
+  { id: "kid2", name: "Kid Bedroom 2", r: [[1.2, 5.6, 4.8, 3.2]], note: "Faces east onto the courtyard; same size as Kid Bedroom 1.", tips: [] },
+  { id: "bath", name: "Shower Room", wet: 1, r: [[1.2, 8.8, 4.8, 2.0]], note: "Shared shower room for the kids.", tips: [] },
+  { id: "ensuite", name: "En-suite", wet: 1, r: [[1.2, 10.8, 2.6, 2.2]], note: "Master en-suite with walk-in shower, roof light.", tips: [] },
+  { id: "wic", name: "WIC", r: [[3.8, 10.8, 2.2, 2.2]], note: "Walk-in closet.", tips: [] },
+  { id: "mbed", name: "Master Bedroom", r: [[0, 13.0, 6.0, 4.4]], note: "The master suite on its own at the far end of the wing, beyond the kids' shower room: east glass onto the courtyard and pool, north and west windows onto the olive garden.", tips: [] },
+];
+const OPEN = new Set(["foyer|living", "kitchen|living", "corr|foyer"]);
+const DOORS = [[4.6, -7.5, 5.7, -7.5], [3.6, -6.0, 3.6, -5.1], [0.5, -2.0, 1.3, -2.0], [2.2, -2.0, 3.1, -2.0], [1.2, 0.0, 1.2, 0.9], [1.2, 3.6, 1.2, 4.5], [1.2, 6.8, 1.2, 7.7],
+  [1.2, 9.4, 1.2, 10.2], [0.15, 13.0, 1.05, 13.0], [1.6, 13.0, 2.4, 13.0], [4.4, 13.0, 5.2, 13.0], [11.9, -5.0, 12.8, -5.0], [13.8, -5.0, 14.7, -5.0],
+  [11.9, -7.5, 12.8, -7.5], [13.8, -7.5, 14.7, -7.5], [8.8, -9.5, 8.8, -8.6], [6.6, -9.8, 6.6, -8.9]];
+const WINDOWS = [[0.4, -7.5, 3.2, -7.5], [0, -7.0, 0, -4.5], [0, -3.5, 0, -2.5], [3.8, -7.5, 4.4, -7.5], [7.0, -1.0, 11.0, -1.0], [11.8, -1.0, 15.0, -1.0], [15.3, -4.6, 15.3, -1.4],
+  [6.0, -0.5, 6.0, 2.0], [6.0, 2.8, 6.0, 5.2], [6.0, 6.0, 6.0, 8.4], [6.0, 9.3, 6.0, 10.4], [6.0, 13.4, 6.0, 17.0], [0.6, 17.4, 5.4, 17.4], [0, 14.0, 0, 16.5], [0, 0.2, 0, 12.5]];
+const GARAGE_DOOR = [15.3, -13.5, 15.3, -8.0];
+const POOL = [9.3, 2.75, 4.0, 10.0];
+
+// ---------- site ----------
+const defs = el("defs");
+const tile = el("pattern", { id: "tile", width: 0.3 * S, height: 0.3 * S, patternUnits: "userSpaceOnUse" }, defs);
+el("rect", { width: 0.3 * S, height: 0.3 * S, fill: "var(--sheet)" }, tile); el("path", { d: `M 0 0 L ${0.3 * S} 0 M 0 0 L 0 ${0.3 * S}`, stroke: "var(--rule)", "stroke-width": .7 }, tile);
+const hatch = el("pattern", { id: "hatch", width: 6, height: 6, patternUnits: "userSpaceOnUse", patternTransform: "rotate(45)" }, defs);
+el("rect", { width: 6, height: 6, fill: "var(--lawn)" }, hatch); el("line", { x1: 0, y1: 0, x2: 0, y2: 6, stroke: "var(--rule)" }, hatch);
+el("rect", { ...RA(PX0 - 2, PY1, PX1 - PX0 + 7, 5), fill: "var(--road)" }); txt(X(7.6), Y(PY1 + 2.3), "Road (north)", "anno", { "text-anchor": "middle" });
+el("rect", { ...RA(PX1, PY0 - 3.5, 4.5, PY1 - PY0 + 8.5), fill: "var(--road)" });
+txt(X(PX1 + 2.6), Y(2), "Road (east) · garage access", "anno", { "text-anchor": "middle", transform: `rotate(90 ${X(PX1 + 2.6)} ${Y(2)})` });
+el("rect", { ...RA(PX0 - 2, PY0 - 3.5, PX1 - PX0 + 7, 3.5), fill: "var(--road)" }); txt(X(7.6), Y(PY0 - 2.1), "Road (south) · main entrance", "anno", { "text-anchor": "middle" });
+el("rect", { ...RA(PX0, PY0, PX1 - PX0, PY1 - PY0), fill: "var(--lawn)", stroke: "var(--ink)", "stroke-width": 1.5 });
+el("rect", { ...RA(PX0, PY0, 3, PY1 - PY0), fill: "url(#hatch)" }); el("rect", { ...RA(PX1 - 3, PY0, 3, PY1 - PY0), fill: "url(#hatch)" });
+txt(X(-1.5), Y(-15), "3 m setback · neighbour", "anno", { "text-anchor": "middle", transform: `rotate(-90 ${X(-1.5)} ${Y(-15)})` });
+// approach: south gate, path, porch; east driveway to the garage; χελώνα by the gate
+el("rect", { ...RA(4.6, PY0, 1.1, -7.5 - PY0), fill: "var(--road)" }); txt(X(6.0), Y(-20), "path from the south gate", "small");
+el("rect", { ...RA(4.4, PY0 - 0.15, 1.5, 0.3), fill: "var(--sheet)", stroke: "var(--ink)" });
+el("rect", { ...RA(2.2, PY0 - 0.2, 1.2, 0.5), fill: "var(--ink)" }); txt(X(2.8), Y(PY0 + 0.7), "χελώνα", "small", { "text-anchor": "middle" });
+el("rect", { ...RA(4.1, -8.9, 2.1, 1.4), fill: "none", stroke: "var(--ink-soft)", "stroke-dasharray": "3 2" });
+el("rect", { ...RA(15.3, -13.5, 3.0, 5.5), fill: "var(--road)", stroke: "var(--ink-soft)", "stroke-dasharray": "3 3" });
+// courtyard: terrace with pergola, deck, overflow pool, BBQ, pool house, walls
+el("rect", { ...RA(6.0, -1.0, 9.3, 18.4), fill: "var(--court)", stroke: "var(--ink-soft)", "stroke-width": .6 });
+el("rect", { ...RA(6.0, -1.0, 9.3, 3.8), fill: "url(#tile)", stroke: "none" });
+el("rect", { ...RA(6.0, -1.0, 9.3, 3.8), fill: "none", stroke: "var(--ink)", "stroke-dasharray": "8 4" });
+[6.15, 8.9, 13.75, 15.15].forEach(x => el("rect", { ...RA(x - 0.1, 2.6, 0.2, 0.2), fill: "var(--ink)" }));
+txt(X(10.6), Y(0.4), "terrace · pergola", "anno", { "text-anchor": "middle" });
+el("rect", { ...RA(POOL[0] - 0.25, POOL[1] - 0.25, POOL[2] + 0.5, POOL[3] + 0.5), fill: "none", stroke: "var(--ink)", "stroke-width": 3, opacity: .5 });
+el("rect", { ...RA(...POOL), fill: "var(--water)", stroke: "var(--glass)", "stroke-width": 1.2 });
+el("line", { x1: X(POOL[0]), y1: Y(POOL[1] + 1.5), x2: X(POOL[0] + POOL[2]), y2: Y(POOL[1] + 1.5), stroke: "var(--glass)", "stroke-dasharray": "4 3" });
+txt(X(11.3), Y(8.2), "POOL 4 × 10", "rn", { "text-anchor": "middle" }); txt(X(11.3), Y(7.4), "overflow", "small", { "text-anchor": "middle" });
+el("rect", { ...RA(7.2, 10.0, 1.4, 2.0), fill: "none", stroke: "var(--glass)", "stroke-dasharray": "3 2" }); txt(X(7.9), Y(12.4), "balance tank", "small", { "text-anchor": "middle" });
+el("rect", { ...RA(14.65, 0.0, 0.6, 3.0), class: "fx" }); el("rect", { ...RA(14.7, 0.4, 0.5, 0.9), fill: "var(--accent)", opacity: .6 }); txt(X(14.5), Y(1.6), "BBQ", "small", { "text-anchor": "end" });
+[6.0, 7.3, 8.6].forEach(y => el("rect", { ...RA(7.1, y - 0.95, 0.66, 1.9), class: "fx" }));
+el("rect", { ...RA(15.3, -1.0, 0.25, 18.4), fill: "var(--ink)" }); txt(X(16.6), Y(8), "2.2 m courtyard wall", "small", { transform: `rotate(90 ${X(16.6)} ${Y(8)})`, "text-anchor": "middle" });
+el("rect", { ...RA(6.0, 17.4, 3.9, 0.15), fill: "var(--ink)" });
+[[9.9, 15.0, 2.2, "Plant room"], [12.1, 15.0, 1.6, "WC"], [13.7, 15.0, 1.6, "Store"]].forEach(([x, y, w, n]) => { el("rect", { ...RA(x, y, w, 2.4), fill: n === "WC" ? "url(#tile)" : "var(--sheet)", stroke: "var(--ink)", "stroke-width": 2.5 }); txt(X(x + w / 2), Y(y + 1.2) + 3, n, "rn", { "text-anchor": "middle" }); });
+txt(X(10.6), Y(14.4), "pool house", "small", { "text-anchor": "middle" });
+// olive trees: front garden, north garden, along the boundaries
+[[-1.2, -21], [1.5, -18], [8, -21.5], [11.5, -18], [15.5, -22], [1.5, -11.5], [16.6, -18], [-1.2, -9], [-1.2, 21], [3, 22.5], [8, 21], [12.5, 23], [16.6, 21], [16.6, -3], [-1.2, 5]]
+  .forEach(([x, y], i) => el("circle", { cx: X(x), cy: Y(y), r: (1.4 + (i % 3) * 0.35) * S, fill: "var(--tree)", stroke: "var(--ink-soft)", "stroke-width": .6, opacity: .85 }));
+txt(X(7), Y(-15.5), "front garden · olive trees", "anno", { "text-anchor": "middle" }); txt(X(7.5), Y(19.6), "north garden · olive trees", "anno", { "text-anchor": "middle" });
+
+// ---------- rooms ----------
+const area = rm => rm.r.reduce((s, q) => s + q[2] * q[3], 0);
+const roomG = el("g"), roomEls = {};
+ROOMS.forEach(rm => {
+  const g = el("g", { class: "room" + (rm.wet ? " wet" : ""), tabindex: 0, role: "button", "aria-label": rm.name || "Corridor" }, roomG);
+  rm.r.forEach(q => el("rect", RA(...q), g));
+  g.onclick = () => select(rm.id); g.onkeydown = e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); select(rm.id); } };
+  roomEls[rm.id] = g;
+});
+// ---------- walls, glazing, doors, fixtures ----------
+const archG = el("g");
+{
+  const rl = ROOMS.flatMap(r => r.r.map(q => [r.id, ...q]));
+  const at = (x, y) => { for (const [id, rx, ry, rw, rh] of rl) if (x > rx && x < rx + rw && y > ry && y < ry + rh) return id; return null; };
+  const near = (a, b) => Math.abs(a - b) < 1e-6;
+  const hit = (h, line, p, o) => h ? (near(o[1], line) && near(o[3], line) && p > Math.min(o[0], o[2]) && p < Math.max(o[0], o[2])) : (near(o[0], line) && near(o[2], line) && p > Math.min(o[1], o[3]) && p < Math.max(o[1], o[3]));
+  const opening = (h, line, p) => DOORS.some(o => hit(h, line, p, o)) ? "door" : hit(h, line, p, GARAGE_DOOR) ? "garage" : WINDOWS.some(o => hit(h, line, p, o)) ? "win" : null;
+  const hs = new Set(), vs = new Set();
+  rl.forEach(([, x, y, w, h]) => { hs.add(+y.toFixed(3)); hs.add(+(y + h).toFixed(3)); vs.add(+x.toFixed(3)); vs.add(+(x + w).toFixed(3)); });
+  const seg = (h, line, a, b, o, cls, extra = {}) => { const [x1, y1, x2, y2] = h ? [a, line + o, b, line + o] : [line + o, a, line + o, b]; el("line", { x1: X(x1), y1: Y(y1), x2: X(x2), y2: Y(y2), class: cls, ...extra }, archG); };
+  const scan = (h, line) => {
+    const from = h ? 0 : -14.5, to = h ? 15.3 : 18, STEP = 0.05, n = Math.round((to - from) / STEP);
+    let run = null;
+    const flush = end => {
+      if (!run) return; const { a, t, kind } = run, b = end;
+      if (kind === "wall") el("rect", h ? { ...RA(a - t / 2, line - t / 2, b - a + t, t), class: "wallp" } : { ...RA(line - t / 2, a - t / 2, t, b - a + t), class: "wallp" }, archG);
+      else if (kind === "win") [-t / 2, 0, t / 2].forEach(o => seg(h, line, a, b, o, "glz"));
+      else if (kind === "garage") seg(h, line, a, b, 0, "glz", { "stroke-dasharray": "5 3" });
+      run = null;
+    };
+    for (let k = 0; k < n; k++) {
+      const p = from + k * STEP + STEP / 2;
+      const A = h ? at(p, line - 0.02) : at(line - 0.02, p), B = h ? at(p, line + 0.02) : at(line + 0.02, p);
+      let key = null, t = 0, kind = null;
+      if (A !== B && !(A && B && OPEN.has([A, B].sort().join("|")))) { t = A && B ? 0.12 : 0.3; kind = opening(h, line, p) || "wall"; key = kind + t; }
+      if (!run || run.key !== key) { flush(from + k * STEP); if (key) run = { a: from + k * STEP, t, kind, key }; }
+    }
+    flush(from + n * STEP);
+  };
+  hs.forEach(y => scan(true, y)); vs.forEach(x => scan(false, x));
+  DOORS.forEach(([a, b, c, d]) => {
+    const len = Math.hypot(c - a, d - b), vert = near(a, c);
+    const s = vert ? (at(a + 0.25, (b + d) / 2) ? 1 : -1) : (at((a + c) / 2, b + 0.25) ? 1 : -1);
+    const lx = vert ? a + s * len : a, ly = vert ? b : b + s * len;
+    el("line", { x1: X(a), y1: Y(b), x2: X(lx), y2: Y(ly), class: "leaf" }, archG);
+    const cross = (X(lx) - X(a)) * (Y(d) - Y(b)) - (Y(ly) - Y(b)) * (X(c) - X(a));
+    el("path", { d: `M ${X(lx)} ${Y(ly)} A ${len * S} ${len * S} 0 0 ${cross > 0 ? 1 : 0} ${X(c)} ${Y(d)}`, class: "arc" }, archG);
+  });
+  const fr = (x, y, w, h, cls = "fx") => el("rect", { ...RA(x, y, w, h), class: cls }, archG);
+  const fl = (x1, y1, x2, y2) => el("line", { x1: X(x1), y1: Y(y1), x2: X(x2), y2: Y(y2), class: "fxl" }, archG);
+  const fc = (x, y, r, cls = "fx") => el("circle", { cx: X(x), cy: Y(y), r: r * S, class: cls }, archG);
+  const fe = (x, y, rx, ry) => el("ellipse", { cx: X(x), cy: Y(y), rx: rx * S, ry: ry * S, class: "fx" }, archG);
+  const shower = (x, y, w, h) => { fr(x, y, w, h); fl(x, y, x + w, y + h); fl(x, y + h, x + w, y); };
+  const bedW = (x, y, w, l) => { fr(x, y, l, w); fr(x + 0.06, y + 0.08, 0.32, w - 0.16); fl(x + 0.75, y, x + 0.75, y + w); };   // head on the west wall
+  // office desks on the north wall, guest WC, coats, foyer bench and cupboard
+  fr(0.1, -4.55, 1.6, 0.7); fr(1.85, -4.55, 1.6, 0.7); fc(0.9, -5.2, 0.24); fc(2.65, -5.2, 0.24);
+  fr(0.05, -3.25, 0.2, 0.45); fe(0.52, -3.02, 0.27, 0.19); fr(1.2, -3.75, 0.5, 0.4);
+  fr(1.85, -3.75, 1.7, 0.45); fr(3.65, -5.0, 0.42, 1.1); fr(6.15, -6.9, 0.4, 1.0);
+  // living: TV and fireplace on the south wall, sofa facing them; kitchen: run and fridge on the east wall, island
+  fr(7.3, -7.45, 2.2, 0.45); fr(10.0, -7.45, 1.2, 0.4, "fxa"); fr(7.6, -4.85, 2.6, 0.95); fr(8.3, -6.1, 1.2, 0.7); fr(6.7, -5.6, 0.8, 0.85);
+  fr(14.65, -3.7, 0.6, 2.5); [[14.95, -2.9], [14.95, -2.5]].forEach(([x, y]) => fc(x, y, 0.09, "fxl")); fr(14.62, -4.95, 0.65, 1.2);
+  fr(12.45, -4.0, 0.95, 2.0); [-3.6, -3.0, -2.4].forEach(y => fc(12.05, y, 0.16));
+  [-6.9, -6.25].forEach(y => { fr(11.45, y - 0.3, 0.6, 0.6); fc(11.75, y, 0.21); }); fc(13.0, -7.15, 0.28);
+  fr(14.9, -7.45, 0.36, 2.4); fr(13.35, -7.45, 0.36, 2.0);
+  for (let i = 0; i < 3; i++) fr(6.7 + i * 0.6, -10.45, 0.52, 0.28, "fxa");
+  fr(7.7, -8.1, 0.95, 0.55); const tt = el("text", { x: X(6.7), y: Y(-9.75), class: "fxt" }, archG); tt.textContent = "batteries 15 kWh";
+  // garage: both cars nose-out to the east road, motorcycle, shelves
+  [[9.45, -10.15, 4.32, 1.765, "BMW 1"], [9.45, -13.6, 5.15, 2.0, "BMW X7"]].forEach(([x, y, w, h, n]) => { el("rect", { ...RA(x, y, w, h), class: "car", rx: 5 }, archG); txt(X(x + w / 2), Y(y + h / 2) + 3, n, "small", { "text-anchor": "middle" }, archG); });
+  fr(8.95, -12.9, 0.4, 2.0); fr(9.15, -11.5, 0.5, 1.9);
+  // bedroom wing: guest room with its own shower, kids' rooms, shared shower room, master suite
+  shower(1.25, -0.95, 1.2, 1.15); bedW(3.6, 0.4, 1.4, 2.0); fr(5.1, -0.9, 0.85, 0.5);
+  [2.4, 5.6].forEach(y0 => { bedW(1.3, y0 + 1.95, 0.9, 2.0); fr(4.6, y0 + 0.05, 1.3, 0.6); fc(5.25, y0 + 0.95, 0.22); fr(1.3, y0 + 0.05, 2.0, 0.6); fl(1.3, y0 + 0.05, 3.3, y0 + 0.65); });
+  shower(4.9, 8.85, 1.05, 1.9); fr(1.3, 10.3, 1.2, 0.45); fr(3.0, 8.85, 0.45, 0.2); fe(3.22, 9.12, 0.19, 0.27);
+  shower(1.25, 11.45, 1.0, 1.5); fr(2.4, 12.55, 1.3, 0.4); fr(3.3, 10.85, 0.45, 0.2); fe(3.52, 11.12, 0.19, 0.27);
+  fr(5.45, 10.85, 0.5, 2.1); fr(3.85, 10.85, 0.4, 2.1);
+  bedW(0.1, 14.4, 1.8, 2.1); fr(0.1, 13.85, 0.4, 0.45); fr(0.1, 16.3, 0.4, 0.45); fr(4.9, 15.9, 0.85, 0.85);
+}
+const labelG = el("g");
+ROOMS.forEach(rm => {
+  if (!rm.name) return;
+  const [x, y, w, h] = rm.r[0];
+  txt(X(x + w / 2), Y(y + h / 2) - 1, rm.name, "rn", { "text-anchor": "middle" }, labelG);
+  txt(X(x + w / 2), Y(y + h / 2) + 9, area(rm).toFixed(1) + " m²", "ra", { "text-anchor": "middle" }, labelG);
+});
+
+// ---------- north arrow, scale bar ----------
+const na = el("g", { transform: `translate(${X(PX1 - 1)}, ${Y(PY1 - 2.5)}) rotate(${-ROT})` });
+el("circle", { r: 15, fill: "var(--sheet)", stroke: "var(--ink-soft)" }, na); el("path", { d: "M 0 -12 L 4 3 L 0 0 L -4 3 Z", fill: "var(--accent)" }, na);
+txt(0, -19, "N", "rn", { "text-anchor": "middle" }, na);
+const sb = el("g", { transform: `translate(${X(PX0)}, ${Y(PY0 - 4.6)})` });
+for (let i = 0; i < 5; i++) el("rect", { x: i * S, y: 0, width: S, height: 5, fill: i % 2 ? "var(--sheet)" : "var(--ink)", stroke: "var(--ink)" }, sb);
+txt(0, 16, "0", "small", {}, sb); txt(5 * S, 16, "5 m", "small", { "text-anchor": "middle" }, sb);
+
+// ---------- dimensions ----------
+const dimG = el("g", { class: "dimg" }); dimG.style.display = "none";
+function chain(h, at, pts) {
+  const P = p => h ? [X(p), Y(at)] : [X(at), Y(p)];
+  const [ax, ay] = P(pts[0]), [bx, by] = P(pts[pts.length - 1]);
+  el("line", { x1: ax, y1: ay, x2: bx, y2: by }, dimG);
+  pts.forEach(p => { const [x, y] = P(p); el("line", { x1: x - 3, y1: y + 3, x2: x + 3, y2: y - 3 }, dimG); });
+  for (let i = 1; i < pts.length; i++) { const [x, y] = P((pts[i - 1] + pts[i]) / 2); const t = txt(h ? x : x - 3, h ? y - 3 : y, (pts[i] - pts[i - 1]).toFixed(2), "", { "text-anchor": "middle" }, dimG); if (!h) t.setAttribute("transform", `rotate(-90 ${x - 3} ${y})`); }
+}
+chain(true, -15.0, [PX0, 0, 6.6, 8.8, 15.3, PX1]); chain(true, 18.2, [0, 6.0, 15.3]); chain(false, -1.6, [PY0, -14, -7.5, -1.0, 13.0, 17.4, PY1]); chain(false, 17.2, [-14, -7.5, -1.0, POOL[1], POOL[1] + POOL[3], 15.0, 17.4]);
+ROOMS.forEach(rm => { if (!rm.name) return; const [x, y, w, h] = rm.r[0]; txt(X(x + w / 2), Y(y + h / 2) + 18, w.toFixed(2) + "×" + h.toFixed(2), "", { "text-anchor": "middle" }, dimG); });
+document.getElementById("show-dims").onclick = e => { const on = dimG.style.display === "none"; dimG.style.display = on ? "" : "none"; e.target.setAttribute("aria-pressed", String(on)); };
+
+// ---------- routes ----------
+const ROUTES = {
+  foot: { label: "Arriving on foot", pts: [[5.15, PY0 - 1], [5.15, -7.9], [5.15, -5.5], [8.6, -3.5]], note: "<b>On foot:</b> through the gate in the south wall, 17 m up the path between the olive trees, under the porch to the front door, and through the foyer straight into the living room, with the courtyard and pool beyond the glass." },
+  car: { label: "Arriving by car", pts: [[PX1 + 1.5, -10.8], [15.3, -10.8], [12.0, -10.8], [12.35, -7.9], [12.35, -4.6]], note: "<b>By car:</b> from the east road straight into the garage, then through the laundry, the everyday family entrance, into the kitchen." },
+  grocery: { label: "Groceries", pts: [[13.0, -9.6], [14.25, -8.0], [14.25, -5.5], [13.0, -3.0]], note: "<b>Groceries:</b> from the boot of the car through the pantry door to the kitchen island: about 5 m." },
+  guests: { label: "Guests", pts: [[5.15, -7.9], [5.0, -4.5], [0.6, -1.5], [0.6, 0.45], [2.5, 0.45]], note: "<b>Guests:</b> the guest room is the first door in the bedroom corridor, a few steps from the front door, with its own shower; the guest WC is off the foyer." },
+  views: { label: "Courtyard views", pts: [[9.0, -1.4], [11.3, 6.0], null, [13.3, -1.4], [11.5, 4.0], null, [5.7, 4.0], [10.5, 6.5], null, [5.7, 15.2], [10.5, 10.0]], note: "<b>Courtyard views:</b> the living room and kitchen look north across the terrace to the pool; the bedrooms and the master suite look east onto it. The courtyard is closed to all three roads." },
+};
+const routeG = el("g"), note = document.getElementById("note");
+let active = null;
+function showRoute(k) {
+  active = active === k ? null : k; routeG.innerHTML = "";
+  document.querySelectorAll("#routeChips button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.k === active)));
+  if (!active) { note.textContent = "Pick a route to trace how people and cars move through the plot."; return; }
+  const parts = [[]]; ROUTES[active].pts.forEach(p => p ? parts[parts.length - 1].push(p) : parts.push([]));
+  parts.forEach(pts => { el("polyline", { points: pts.map(([x, y]) => X(x) + "," + Y(y)).join(" "), class: "route" }, routeG); const [lx, ly] = pts[pts.length - 1]; el("circle", { cx: X(lx), cy: Y(ly), r: 5, fill: "none", stroke: "var(--accent)", "stroke-width": 2.5 }, routeG); });
+  note.innerHTML = ROUTES[active].note;
+}
+Object.entries(ROUTES).forEach(([k, r]) => { const b = document.createElement("button"); b.className = "chip"; b.dataset.k = k; b.textContent = r.label; b.setAttribute("aria-pressed", "false"); b.onclick = () => showRoute(k); document.getElementById("routeChips").appendChild(b); });
+
+// ---------- inspector and schedule ----------
+const insp = document.getElementById("insp");
+function select(id) {
+  const rm = ROOMS.find(r => r.id === id);
+  Object.values(roomEls).forEach(g => g.classList.remove("sel")); roomEls[id].classList.add("sel");
+  const [x, y, w, h] = rm.r[0];
+  insp.innerHTML = `<div class="eyebrow">Plot 2 · v2</div><h2>${rm.name || "Bedroom corridor"}</h2><div class="dims">${rm.r.length === 1 ? w.toFixed(2) + " × " + h.toFixed(2) + " m · " : ""}${area(rm).toFixed(1)} m²</div><p>${rm.note}</p>${rm.tips.length ? "<ul>" + rm.tips.map(t => "<li>" + t + "</li>").join("") + "</ul>" : ""}`;
+}
+const sched = document.getElementById("sched"); let net = 0;
+ROOMS.forEach(rm => { if (rm.garage) return; const a = area(rm); net += a; const tr = document.createElement("tr"); tr.innerHTML = `<td>${rm.name || "Bedroom corridor"}</td><td>${a.toFixed(1)} m²</td>`; tr.onclick = () => select(rm.id); sched.appendChild(tr); });
+const tot = document.createElement("tr"); tot.className = "total"; tot.innerHTML = `<td>Heated area (excl. garage)</td><td>${net.toFixed(1)} m²</td>`; sched.appendChild(tot);
+document.getElementById("m-net").textContent = net.toFixed(1) + " m²";
+select("living");
+</script>
