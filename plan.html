@@ -139,7 +139,7 @@ table.sched tr.sub td { color: var(--ink-soft); cursor: default; border-bottom: 
 <div class="wrap">
   <header>
     <div>
-      <h1>Split-Wing House Plan · v3</h1>
+      <h1>Split-Wing House Plan · v4</h1>
       <p class="sub">Single storey on a narrow plot (19 × 53 m) with the street on the south. The kids' rooms and the garage face the sunny street side. The office, living room and master bedroom look north across the garden to a pool placed 7 m out, clear of the house's summer shadow. Click any room or route. <a href="3d.html" style="color:var(--accent)">Open the 3D model</a> · <a href="compare.html" style="color:var(--accent)">Compare versions</a> · <a href="index.html" style="color:var(--accent)">Home</a></p>
     </div>
     <div class="meta">
@@ -162,6 +162,8 @@ table.sched tr.sub td { color: var(--ink-soft); cursor: default; border-bottom: 
         <div class="chips" id="routeChips"></div>
         <span class="lab">Show</span>
         <div class="chips" id="showChips"></div>
+        <span class="lab">Layers</span>
+        <div class="chips" id="layerChips"></div>
       </div>
       <div class="plan-box"><svg id="plan" viewBox="0 0 660 1244" role="img" aria-label="Single-storey floor plan, north up, street at the bottom, pool in the north garden"></svg></div>
       <div class="route-note" id="routeNote">Pick a route to trace how a person moves through the house.</div>
@@ -228,33 +230,33 @@ const ROOMS = [
     note: "Compact north-west corner office, 3.4 × 4.6 m, with a north window onto the garden and pool, and a west window. North light is the best light for screen work: bright, even and glare-free all day.",
     tips: ["Two large desks (180 × 80 cm) side by side along the 4.6 m east wall take 3.6 m, with the pool window to your left. No glare on the screens.", "1.2 m between the desks and the back wall leaves room for the chairs to roll out.", "A low cabinet under the west window holds the printer and files.", "The west window gets low afternoon sun: use external blinds, or keep it narrow.", "Solid-core door (it opens off the living room's reading corner) and acoustic insulation on the wall shared with the living room, where the TV is."],
     adj: ["living"] },
-  { id: "foyer", name: "Foyer", zone: "circ", r: [3.4, 0, 3.6, 2.4],
+  { id: "foyer", name: "Foyer", zone: "circ", r: [3.4, 0, 3.1, 2.4],
     note: "The one entrance for everyone: the front door from the street (south) and the door from the garage (east) both open here. It also does the old mudroom's job: coats, shoes, keys and bags are left here before you go into the house.",
     tips: ["A 2 m coat and shoe cupboard on the north wall, plus a bench by the west wall.", "Stone or tile floor: it takes wet shoes from both entrances.", "The garage door must be fire-rated and self-closing.", "A small covered porch keeps the midday sun off the front door."], adj: ["garage", "gallery"] },
-  { id: "gallery", name: "Entry Hall", zone: "circ", r: [3.4, 2.4, 1.5, 10.8], label: false,
-    note: "1.5 m hall from the foyer to the great room. The kids' rooms, shared shower room, storage and tech room open off it. It ends in the living room's reading corner, where the office door is.",
+  { id: "gallery", name: "Entry Hall", zone: "circ", r: [3.4, 2.4, 1.2, 10.8], label: false,
+    note: "1.2 m hall from the foyer to the great room. The kids' rooms, shared shower room, storage and tech room open off it. It ends in the living room's reading corner, where the office door is.",
     tips: ["Add a skylight or two: on a narrow plot the middle of the house gets no side windows.", "Line one wall with shallow built-ins if you want more storage."],
     adj: ["foyer", "kid1", "kid2", "bath", "store", "tech", "living"] },
-  { id: "bath", name: "Shared Shower Room", zone: "kids", r: [4.9, 2.4, 2.1, 3.6],
+  { id: "bath", name: "Shared Shower Room", zone: "kids", r: [4.6, 2.4, 1.9, 3.6],
     note: "Guest WC with a walk-in shower, also used by the kids. It is the first door off the hall, so guests don't walk deep into the house.",
-    tips: ["A linear layout: basin, WC, then a 90 × 120 cm level shower at the far end.", "No outside wall, so use a mechanical extract fan and a sun tube or skylight."], adj: ["gallery"] },
-  { id: "pantry", name: "Pantry", zone: "service", r: [4.9, 6.0, 2.1, 2.6],
+    tips: ["1.9 m wide: a linear layout with basin, WC, then a 90 × 120 cm level shower at the far end.", "No outside wall, so use a mechanical extract fan and a sun tube or skylight."], adj: ["gallery"] },
+  { id: "pantry", name: "Pantry", zone: "service", r: [4.6, 6.0, 1.9, 2.6],
     note: "Walk-in pantry with a door straight from the garage and a door into the kitchen. Park, open the boot, and carry the shopping about 3 m from the car into the pantry. People still come in through the foyer; this door is for unloading.",
     tips: ["The garage door must be fire-rated and self-closing (most building rules require it between a garage and the house).", "Put a landing shelf right inside the garage door, so bags go straight down.", "Shelves 35 cm deep on the south and west walls, plus one tall bay for a second fridge or freezer.", "Use pocket doors."], adj: ["garage", "kitchen"] },
-  { id: "garage", name: "Garage", zone: "service", r: [[7.0, 0, 6.0, 6.5], [7.0, 6.5, 2.4, 2.1]],
-    note: "Two-car garage on the street side. People go into the house through the door to the foyer, the same place as the front door. A second door, at the back by the storage bay, opens straight into the pantry for unloading shopping. The old mudroom became that storage bay, for bikes, tools and garden things. The garage shades the south side of the kitchen zone in summer.",
-    tips: ["The door to the foyer is near the front of the garage: park the left car about 0.8 m from the west wall so you can walk past it.", "6.0 × 6.5 m is the practical minimum for two cars. Fold mirrors and use a 4.8–5.0 m wide door.", "In Greece a closed garage may count toward the permitted building area, while a pergola carport usually doesn't. Check with your engineer before you settle on this.", "The garage roof faces south and is free of shade: a good place for some of the solar panels."],
+  { id: "garage", name: "Garage", zone: "service", r: [[6.5, 0, 6.5, 6.5], [6.5, 6.5, 2.9, 2.1]],
+    note: "Two-car garage on the street side, 6.5 m wide with a 5.5 m door, sized for the BMW X7 and the BMW 1 Series side by side. People go into the house through the door to the foyer, the same place as the front door. A second door, at the back by the storage bay, opens straight into the pantry for unloading shopping. The old mudroom became that storage bay, for bikes, tools and garden things. The garage shades the south side of the kitchen zone in summer.",
+    tips: ["With the X7 and the F20 parked, there is about 0.9 m by the west wall (the walk to the foyer door), 0.9 m between the cars and 0.9 m by the east wall.", "The 5.5 m door leaves about 30 cm on each side of either car with its mirrors out.", "The X7 is 1.80 m tall: keep the door opening at least 2.2 m high.", "Flood protection: the garage floor is 15 cm above the driveway, with a full-width slot drain in front of the door, the driveway falling toward the street, and slots in the door reveals for a removable flood barrier. A second slot drain at the gate stops street water coming in. Both drain to a soakaway.", "In Greece a closed garage may count toward the permitted building area, while a pergola carport usually doesn't. Check with your engineer before you settle on this.", "The garage roof faces south and is free of shade: a good place for some of the solar panels."],
     adj: ["foyer", "pantry"] },
   { id: "laundry", name: "Laundry", zone: "service", r: [9.4, 6.5, 3.6, 2.1],
     note: "Laundry off the back of the kitchen, sharing a wall with the garage rather than with a bedroom or the living room. East window.",
     tips: ["Washer and dryer side by side on the north wall, with a sink and folding counter opposite.", "A solid door keeps the machine noise out of the kitchen.", "Floor drain."], adj: ["kitchen"] },
-  { id: "kitchen", name: "Kitchen", zone: "public", r: [4.9, 8.6, 6.1, 3.8], open: true,
+  { id: "kitchen", name: "Kitchen", zone: "public", r: [4.6, 8.6, 6.4, 3.8], open: true,
     note: "Island kitchen at the heart of the plan, open to the living room. With no dining room, the island is where everyday meals happen. People come in through the foyer. Only the shopping comes in from the garage, through the pantry, which opens off the kitchen together with the laundry.",
     tips: ["Island 2.6 × 1.0 m with four stools along the garden side; leave a 30 cm overhang for knees.", "The kitchen has no outside wall. Raise the roof over the kitchen and add a band of high south-facing windows (a clerestory) on its south side. That brings winter sun deep into the great room, which a north-facing garden otherwise can't give.", "A roof overhang over the clerestory blocks the high summer sun."], adj: ["pantry", "laundry", "living"] },
   { id: "ensuite", name: "En-suite", zone: "master", r: [11.0, 8.6, 2.0, 3.8],
     note: "Linear en-suite with a walk-in shower only, no bathtub. Window on the east.",
     tips: ["Walk-in shower about 90 × 160 cm at the far end, fixed glass panel, linear drain.", "Vanity and WC along one wall. A WC niche keeps it private."], adj: ["wic"] },
-  { id: "living", name: "Living Room", zone: "public", r: [[3.4, 14.8, 5.6, 4.3], [4.9, 12.4, 4.1, 2.4], [0, 12.4, 3.4, 2.1], [3.4, 13.2, 1.5, 1.6]], open: true,
+  { id: "living", name: "Living Room", zone: "public", r: [[3.4, 14.8, 5.6, 4.3], [4.6, 12.4, 4.4, 2.4], [0, 12.4, 3.4, 2.1], [3.4, 13.2, 1.2, 1.6]], open: true,
     note: "Living room of about 43 m², with no separate dining room. It has three parts: a seating zone along the glass, a family zone next to the kitchen island, and a reading corner with a west window where the hall ends. The office door opens off the reading corner. Everyday meals happen at the 4-seat kitchen island, or outside at the terrace table. North-facing living room with full-width sliding glass onto the terrace, looking at the sunlit garden and pool. North glass gives soft light with no glare on the TV and stays cool in a Greek summer. Winter sun comes in through the south clerestory. The fireplace and the 85\" TV share the west wall side by side, so the TV is not mounted above the fire.",
     tips: ["85\" TV (about 188 × 107 cm): sofa about 3.3 m away, screen centre at 105–115 cm high, recessed in a niche.", "The TV wall is at right angles to the glazing, so no window reflects in the screen.", "The fireplace sits nearer the glass, so you can see it from the terrace. A sealed insert or gas unit is cleanest. Plan the flue through the roof before the roof is designed.", "Use high-performance double or triple glazing on the north side: it loses heat in winter and gets no sun to make up for it.", "Insulate the west wall acoustically: the office is on the other side."],
     adj: ["gallery", "kitchen", "office", "mlobby"] },
@@ -283,13 +285,13 @@ const DOORS = [
   [4.6, 0, 5.7, 0],        // front door
   [3.4, 2.8, 3.4, 3.7],    // kid 1
   [3.4, 5.5, 3.4, 6.4],    // kid 2
-  [4.9, 2.9, 4.9, 3.7],    // shared bath
+  [4.6, 2.9, 4.6, 3.7],    // shared bath
   [3.4, 8.6, 3.4, 9.4],    // storage
   [3.4, 10.8, 3.4, 11.6],  // tech (fire door)
   [0, 10.8, 0, 11.6],      // tech outside door
   [1.2, 14.5, 2.1, 14.5],  // dining nook -> office
-  [7.0, 0.9, 7.0, 1.8],    // garage -> foyer
-  [7.0, 7.0, 7.0, 7.9],    // garage -> pantry (groceries)
+  [6.5, 0.9, 6.5, 1.8],    // garage -> foyer
+  [6.5, 7.0, 6.5, 7.9],    // garage -> pantry (groceries)
   [9.6, 8.6, 10.5, 8.6],   // kitchen -> laundry
   [5.4, 8.6, 6.3, 8.6],    // pantry -> kitchen
   [9.0, 12.9, 9.0, 13.8],  // living -> master lobby
@@ -311,24 +313,24 @@ const WINDOWS = [
   [2.5, 32.9, 2.5, 33.6],                        // pool WC (high)
 ];
 const POOL_HOUSE = [[2.5, 32.0], [5.7, 32.0], [5.7, 34.2], [2.5, 34.2]];
-const GARAGE_DOOR = [7.5, 0, 12.5, 0];
+const GARAGE_DOOR = [7.0, 0, 12.5, 0];
 const OUTLINE = [[0,0],[W,0],[W,D],[0,D]];
 const POOL = [2.0, 26.0, 9.0, 4.0];
 // Noon shadow of a 4.5 m roof edge at ~38.5° N
 const SHADOWS = [[1.3, "21 Jun noon · 1.3 m"], [3.8, "21 Mar / 21 Sep noon · 3.8 m"], [8.5, "21 Dec noon · 8.5 m (winter only)"]];
 
 const ROUTES = {
-  grocery: { label: "Groceries", lines: [[[8.75,5.6],[8.4,7.45],[6.0,7.45],[6.0,10.2],[7.6,10.6]]],
+  grocery: { label: "Groceries", lines: [[[8.3,5.1],[7.6,7.45],[5.55,7.45],[5.55,10.2],[7.6,10.6]]],
     note: "<b>Groceries:</b> from the back of the car, through the storage bay and the door into the pantry, then the kitchen. About 3 m from the boot to the pantry shelves and 6 m to the island, and you never go through the foyer or living room." },
-  entry: { label: "Arriving", lines: [[[5.15,-1.6],[5.15,1.2]], [[10,3.4],[7.6,1.35],[5.6,1.35]]],
+  entry: { label: "Arriving", lines: [[[5.15,-1.6],[5.15,1.2]], [[6.95,3.4],[6.95,1.35],[5.2,1.35]]],
     note: "<b>Arriving:</b> whether you come in by the front door or from the garage, you land in the same foyer, take off your shoes and coat, and then go on into the house. The garage-to-pantry door is only for unloading shopping." },
-  guest: { label: "Guests", lines: [[[5.15,-1.6],[5.15,1.6],[4.15,3.3],[5.9,3.3]]],
+  guest: { label: "Guests", lines: [[[5.15,-1.6],[5.15,1.6],[4.0,3.3],[5.5,3.3]]],
     note: "<b>Guests:</b> front door → foyer → the first door off the hall is the shower room. Guests going on to the living room walk straight down the hall." },
-  kids: { label: "Kids", lines: [[[1.7,6.0],[4.15,6.0],[4.15,3.3],[5.9,3.3]]],
+  kids: { label: "Kids", lines: [[[1.7,6.0],[4.0,6.0],[4.0,3.3],[5.5,3.3]]],
     note: "<b>Kids:</b> bedroom → hall → shared shower room, a few steps. The kids sleep on the street side (south-west); the master is in the north-east corner, about 17 m away with the whole great room between." },
   master: { label: "Master", lines: [[[6.2,17],[7.0,13.4],[10,13.4],[12,13.6],[12,10.6]], [[10,13.4],[9.75,16.8]]],
     note: "<b>Master:</b> living room → master lobby, then the bedroom, or the walk-in closet → en-suite. The lobby door shuts the whole suite off." },
-  work: { label: "Work", lines: [[[5.15,-1.6],[5.15,1.6],[4.15,3.0],[4.15,13.0],[1.65,13.6],[1.65,16.5]]],
+  work: { label: "Work", lines: [[[5.15,-1.6],[5.15,1.6],[4.0,3.0],[4.0,13.0],[1.65,13.6],[1.65,16.5]]],
     note: "<b>Work:</b> front door → entry hall → across the reading corner → office, without going through the kitchen or living room. The tech room with the rack is the last door on the hall." },
   views: { label: "Pool views", lines: [[[1.7,18.7],[4.0,27.6]], [[6.2,18.7],[6.4,27.6]], [[11.0,18.7],[9.4,27.6]]],
     note: "<b>Pool views:</b> the office, the living room and the master bedroom all face north across the terrace to the pool. Because the pool is 7 m out, the house's shadow stops short of it from spring to autumn, and you see the pool and garden in full sun." },
@@ -397,10 +399,10 @@ ROOMS.forEach(rm => {
 });
 
 txt(X(1.7), Y(13.45), "reading corner", "rarea", { "text-anchor": "middle" });
-txt(X(8.2), Y(7.5), "storage bay", "rarea", { "text-anchor": "middle" });
+txt(X(7.5), Y(7.5), "storage bay", "rarea", { "text-anchor": "middle" });
 // Skylights over the hall and shower room; south clerestory over the kitchen
-[[3.65, 6.6, 1.0, 1.0], [5.45, 4.6, 1.0, 1.0]].forEach(r => el("rect", { ...rectAttrs(...r), class: "skylight" }));
-el("line", { x1: X(4.9), y1: Y(8.75), x2: X(11), y2: Y(8.75), stroke: "var(--glass)", "stroke-width": 2, "stroke-dasharray": "6 3" });
+[[3.5, 6.6, 1.0, 1.0], [5.05, 4.6, 1.0, 1.0]].forEach(r => el("rect", { ...rectAttrs(...r), class: "skylight" }));
+el("line", { x1: X(4.6), y1: Y(8.75), x2: X(11), y2: Y(8.75), stroke: "var(--glass)", "stroke-width": 2, "stroke-dasharray": "6 3" });
 txt(X(7.95), Y(9.15), "south clerestory above", "rarea", { "text-anchor": "middle" });
 
 // Living room furniture: TV, fireplace, sofa
@@ -521,7 +523,7 @@ const ctxLabels = [...svg.querySelectorAll("text.anno")].filter(t => /setback|^W
   const outline = (x, y, w, h, parent, style) => el("rect", { ...rectAttrs(x, y, w, h), ...style }, parent);
   const note = (x, y, s, parent, extra = {}) => txt(X(x), Y(y) + 3, s, "small", { "text-anchor": "middle", ...extra }, parent);
   const car = { fill: "none", stroke: "var(--ink)", "stroke-width": 1, "stroke-dasharray": "4 2", rx: 6 };
-  [[7.77, 0.44, 1.765, 4.32, "BMW 1 (F20)"], [10.3, 0.35, 2.0, 5.15, "BMW X7"], [8.38,6.55,0.75,2, "moto"]].forEach(([x, y, w, h, n]) => {
+  [[7.4, 0.44, 1.765, 4.32, "BMW 1 (F20)"], [10.07, 0.35, 2.0, 5.15, "BMW X7"], [8.38,6.55,0.75,2, "moto"]].forEach(([x, y, w, h, n]) => {
     outline(x, y, w, h, svg, car); note(x + w / 2, y + Math.min(h, 0.9) / 2 + (h > 1 ? 0.25 : 0), n, svg);
   });
   outline(6.380000000000001, 8.62, 1.2, 0.66, svg, { fill: "var(--sheet)", stroke: "var(--ink)", "stroke-width": 1 });
@@ -550,6 +552,127 @@ const ctxLabels = [...svg.querySelectorAll("text.anno")].filter(t => /setback|^W
     } else routeNote.textContent = "Pick a route to trace how a person moves through the house.";
   };
   document.getElementById("showChips").appendChild(b);
+}
+/* services-v4 */
+const SERVICES = {
+  water: { label: "Water", color: "#2f7fc1", note: "<b>Water:</b> the mains enter at the <b>water meter</b> by the street and run up the east side yard to the <b>stop valve, filter and manifold</b> in the laundry. Blue is cold, red is hot from the <b>hot-water cylinder</b> (heated by the heat pump). Separate runs go to the kitchen island, en-suite, shared shower room and laundry machines; a buried line feeds the <b>pool house</b> (WC, BBQ sink, outdoor shower), the pool top-up and two garden taps.",
+    lines: [
+      [[11.6, -4.4], [13.7, -4.4], [13.7, 7.3], [12.85, 7.3]],
+      [[12.85, 7.3], [9.8, 7.3], [9.8, 6.95]],
+      [[12.6, 7.3], [12.6, 11.0], [11.3, 11.0]], [[12.6, 9.5], [12.1, 9.5]], [[12.6, 11.7], [12.6, 11.0]],
+      [[10.05, 7.3], [10.05, 8.9], [9.2, 10.8], [8.55, 10.8]],
+      [[10.05, 8.9], [6.3, 8.9], [6.3, 3.25]], [[6.3, 5.5], [5.6, 5.5]],
+      [[12.0, 7.3], [12.0, 8.0]], [[11.2, 7.3], [11.2, 6.9]],
+      [[13.7, 7.3], [13.7, 31.6], [2.2, 31.6], [2.2, 32.6]], [[8.5, 31.6], [8.5, 33.6]], [[3.3, 31.6], [3.3, 33.4]], [[12.4, 31.6], [12.4, 31.75]],
+    ],
+    hot: [
+      [[9.8, 6.95], [9.95, 7.42], [12.48, 7.42], [12.48, 10.88], [11.3, 10.88]], [[12.48, 9.38], [12.1, 9.38]],
+      [[9.93, 7.42], [9.93, 8.78], [9.1, 10.68], [8.55, 10.68]],
+      [[9.93, 8.78], [6.42, 8.78], [6.42, 3.25]], [[6.42, 5.38], [5.6, 5.38]],
+      [[11.32, 7.42], [11.32, 6.9]],
+    ],
+    points: [
+      [11.6, -4.4, "meter", "water meter"], [12.85, 7.3, "valve", "valve · filter · manifold"], [9.8, 6.95, "valve", "cylinder"],
+      [13.7, -0.3, "tap", "tap"], [13.2, 20.6, "tap", "tap"], [12.4, 31.75, "tap", "pool top-up"],
+    ] },
+  drainage: { label: "Drainage", color: "#8a6440", storm: "#2a9d8f", note: "<b>Drainage:</b> brown is foul water. Every bathroom, the kitchen and the laundry drain east to a line of <b>inspection chambers (IC)</b> along the east side yard, falling about 1–2% to the <b>municipal sewer</b> at the street; the pool house joins at the top. Teal is rainwater: roof downpipes feed a <b>rainwater tank</b> under the lawn for the garden, with an overflow soakaway. <b>Flood protection:</b> the garage floor sits 15 cm above the driveway, a full-width <b>slot drain</b> in front of the door and a second one at the gate catch run-off and send it to a <b>soakaway</b>, the driveway falls toward the street, and the door reveals have slots for a removable flood barrier.",
+    lines: [
+      [[3.3, 33.6], [3.3, 34.6], [14.3, 34.6], [14.3, -4.4]], [[8.5, 33.6], [8.5, 34.6]],
+      [[11.3, 11.0], [14.3, 11.0]], [[12.1, 9.5], [14.3, 9.5]], [[12.0, 8.0], [14.3, 8.0]],
+      [[8.55, 10.8], [10.6, 10.8], [10.6, 8.2], [12.0, 8.2]],
+      [[6.25, 4.35], [14.3, 4.35]], [[5.55, 5.5], [6.6, 5.5], [6.6, 4.35]],
+    ],
+    stormLines: [
+      [[0.1, 19.0], [0.1, 23.6], [0.2, 23.6]], [[12.9, 19.0], [12.9, 22.6], [2.2, 22.6], [2.2, 23.0]], [[0.1, 0.1], [-0.7, 0.1], [-0.7, 23.6], [0.2, 23.6]],
+      [[0.2, 23.6], [-1.6, 23.6]],
+      [[12.9, 0.1], [14.0, -0.3]], [[6.5, -0.3], [14.0, -0.3], [14.4, -2.8]], [[6.6, -4.25], [14.4, -4.25], [14.4, -2.8]],
+    ],
+    points: [
+      [14.3, 34.6, "chamber", "IC"], [14.3, 20.0, "chamber", "IC"], [14.3, 11.0, "chamber", "IC"], [14.3, 8.0, "chamber", "IC"], [14.3, 4.35, "chamber", "IC"],
+      [14.3, -4.4, "meter", "→ sewer"], [14.4, -2.8, "chamber", "soakaway"], [-1.6, 23.6, "chamber", "overflow"],
+      [0.1, 0.1, "tap", ""], [12.9, 0.1, "tap", ""], [0.1, 19.0, "tap", ""], [12.9, 19.0, "tap", ""],
+    ],
+    tank: [0.2, 23.0, 2.0, 1.3] },
+  electrical: { label: "Electrical", color: "#c98a00", note: "<b>Electrical:</b> the <b>ΔΕΗ meter</b> at the front boundary feeds, underground along the west side path, the <b>main panel</b> in the tech room next to the <b>inverter and batteries</b>; DC cable comes down from the roof panels. A trunk runs along the entry-hall ceiling with circuits to every room, plus dedicated lines to the <b>EV charger</b> in the garage, the <b>heat pump</b> and <b>AC outdoor units</b>, and a buried feed to a <b>sub-panel</b> in the pool house (pool pump, BBQ, lights). The ovals are the outdoor wall lights (<b>χελώνες</b>) at the doors, garage, side paths, terrace and pool house.",
+    lines: [
+      [[0.5, -4.4], [-0.6, -4.4], [-0.6, 10.4], [2.6, 10.4]],
+      [[2.6, 10.4], [3.95, 10.4]], [[3.95, 2.6], [3.95, 13.0]],
+      [[3.95, 2.6], [5.0, 1.6]], [[3.95, 3.0], [1.7, 2.0]], [[3.95, 6.0], [1.7, 6.0]], [[3.95, 4.0], [5.5, 4.0]], [[3.95, 7.3], [5.5, 7.3]],
+      [[3.95, 10.5], [7.9, 10.5]], [[3.95, 13.0], [6.2, 16.5]], [[3.95, 13.0], [1.7, 16.8]],
+      [[7.9, 10.5], [10.0, 13.6], [11.0, 17.2]], [[7.9, 10.5], [12.0, 10.5]], [[7.9, 10.5], [10.05, 8.7], [11.2, 7.6]],
+      [[5.0, 1.6], [6.5, 1.4], [12.8, 1.4], [12.85, 3.0]], [[12.85, 3.0], [13.35, 3.8]], [[11.2, 7.6], [13.42, 7.45]],
+      [[-0.6, 10.4], [-0.6, 31.4], [2.6, 31.4], [2.7, 32.3]], [[2.6, 31.4], [12.4, 31.4], [12.4, 31.75]],
+    ],
+    dashed: [[[6.5, 2.5], [1.7, 9.0], [1.2, 10.12]]],
+    points: [
+      [0.5, -4.4, "meter", "ΔΕΗ meter"], [2.6, 10.25, "panel", "main panel"], [12.85, 3.0, "panel", "EV charger"], [2.7, 32.3, "panel", "sub-panel"],
+      [5.0, 1.6, "dot", ""], [1.7, 2.0, "dot", ""], [1.7, 6.0, "dot", ""], [5.5, 4.0, "dot", ""], [5.5, 7.3, "dot", ""], [7.9, 10.5, "dot", ""], [6.2, 16.5, "dot", ""],
+      [1.7, 16.8, "dot", ""], [11.0, 17.2, "dot", ""], [12.0, 10.5, "dot", ""], [11.2, 7.6, "dot", ""],
+      [4.35, -0.12, "light", ""], [5.95, -0.12, "light", ""], [6.8, -0.12, "light", ""], [12.75, -0.12, "light", ""], [-0.12, 6.0, "light", ""], [-0.12, 11.2, "light", ""],
+      [13.12, 5.0, "light", ""], [13.12, 10.0, "light", ""], [2.0, 19.22, "light", ""], [9.2, 19.22, "light", ""], [12.8, 19.22, "light", ""], [4.0, 31.88, "light", ""],
+    ] },
+  network: { label: "Network", color: "#7b4fc4", note: "<b>Network:</b> the fibre/telecom line comes in from the street box, underground along the west path, to the <b>rack</b> in the tech room. From there Cat6 cables run along the hall ceiling to <b>data points</b> at both office desks, the TV wall, the master bedroom and the kids' desks, and to ceiling <b>Wi-Fi access points</b> in the hall and living room. A buried conduit takes a cable to an outdoor access point at the pool house. Triangles are <b>security cameras</b> (front door, garage, side paths, terrace, pool) and there is a <b>video intercom</b> at the gate.",
+    lines: [
+      [[6.3, -4.4], [-0.9, -4.4], [-0.9, 11.8], [2.3, 11.8], [2.3, 12.0]],
+      [[2.3, 12.0], [4.1, 12.0]], [[4.1, 2.6], [4.1, 13.2]],
+      [[4.1, 13.2], [3.4, 14.6], [3.0, 15.85], [3.0, 17.75]], [[4.1, 13.2], [4.1, 16.25], [3.65, 16.25]], [[4.1, 13.2], [9.0, 13.2], [11.0, 15.4]],
+      [[4.1, 2.8], [2.4, 0.6]], [[4.1, 4.8], [2.4, 4.6]], [[4.1, 13.2], [6.6, 14.2]],
+      [[-0.9, 11.8], [-0.9, 31.2], [5.0, 31.2], [5.0, 31.88]],
+      [[4.1, 2.6], [3.5, -0.1]], [[4.1, 2.6], [6.6, 0.9], [12.9, -0.1]], [[-0.9, 12.5], [-0.1, 12.5]], [[12.8, 1.4], [13.12, 7.0]], [[9.0, 13.2], [12.9, 19.2]], [[5.0, 31.2], [2.5, 31.88]],
+      [[6.3, -4.4], [4.0, -4.3]],
+    ],
+    points: [
+      [6.3, -4.4, "meter", "fibre box"], [2.3, 12.0, "panel", "rack"], [3.0, 15.85, "port", ""], [3.0, 17.75, "port", ""], [3.65, 16.25, "port", ""], [11.0, 15.4, "port", ""],
+      [2.4, 0.6, "port", ""], [2.4, 4.6, "port", ""], [4.1, 7.0, "ap", "Wi-Fi"], [6.6, 14.2, "ap", "Wi-Fi"], [5.0, 31.88, "ap", "Wi-Fi"],
+      [3.5, -0.1, "cam", ""], [12.9, -0.1, "cam", ""], [-0.1, 12.5, "cam", ""], [13.12, 7.0, "cam", ""], [12.9, 19.2, "cam", ""], [2.5, 31.88, "cam", ""], [4.0, -4.3, "port", "intercom"],
+    ] },
+};
+// ---------- Flood protection in front of the garage (always shown) ----------
+{
+  const fp = el("g", {});
+  el("rect", { ...rectAttrs(6.5, -0.42, 6.5, 0.24), fill: "var(--ink)", opacity: 0.75 }, fp);
+  for (let x = 6.6; x < 13; x += 0.18) el("line", { x1: X(x), y1: Y(-0.42), x2: X(x), y2: Y(-0.18), stroke: "var(--sheet)", "stroke-width": 1 }, fp);
+  el("rect", { ...rectAttrs(6.6, -4.36, 6.2, 0.2), fill: "var(--ink)", opacity: 0.6 }, fp);
+  [[6.92, -0.1], [12.5, -0.1]].forEach(([x, y]) => el("rect", { ...rectAttrs(x, y, 0.08, 0.1), fill: "var(--accent)" }, fp));
+  txt(X(9.75), Y(-0.75) + 3, "slot drain · +15 cm upstand · flood-barrier slots", "small", { "text-anchor": "middle" }, fp);
+  [7.8, 10.0, 12.2].forEach(x => { el("line", { x1: X(x), y1: Y(-1.4), x2: X(x), y2: Y(-2.6), stroke: "var(--ink-soft)", "stroke-width": 1 }, fp); el("path", { d: "M " + (X(x) - 4) + " " + (Y(-2.6) - 6) + " L " + X(x) + " " + Y(-2.6) + " L " + (X(x) + 4) + " " + (Y(-2.6) - 6), fill: "none", stroke: "var(--ink-soft)" }, fp); });
+  txt(X(9.75), Y(-3.25), "driveway falls 1–2% to the street", "small", { "text-anchor": "middle", style: "fill:var(--ink-soft)" }, fp);
+}
+// ---------- Service layers: water, drainage, electrical, network ----------
+const layerG = {}, layerOn = {};
+{
+  const sym = (g, [x, y, kind, label], color) => {
+    const cx = X(x), cy = Y(y), st = { fill: "var(--sheet)", stroke: color, "stroke-width": 1.6 };
+    if (kind === "meter") el("rect", { x: cx - 6, y: cy - 6, width: 12, height: 12, ...st, fill: color }, g);
+    else if (kind === "panel") el("rect", { x: cx - 8, y: cy - 4, width: 16, height: 8, ...st, fill: color }, g);
+    else if (kind === "chamber") el("rect", { x: cx - 5, y: cy - 5, width: 10, height: 10, ...st }, g);
+    else if (kind === "light") el("ellipse", { cx, cy, rx: 6, ry: 3.5, ...st, fill: color }, g);
+    else if (kind === "cam") el("path", { d: "M " + cx + " " + (cy - 6) + " L " + (cx + 6) + " " + (cy + 5) + " L " + (cx - 6) + " " + (cy + 5) + " Z", ...st }, g);
+    else if (kind === "ap") { el("circle", { cx, cy, r: 6, ...st }, g); el("circle", { cx, cy, r: 2, fill: color }, g); }
+    else if (kind === "port") el("rect", { x: cx - 3.5, y: cy - 3.5, width: 7, height: 7, ...st, fill: color }, g);
+    else el("circle", { cx, cy, r: kind === "dot" ? 2.6 : 3.5, ...st, fill: kind === "dot" ? color : "var(--sheet)" }, g);
+    if (label) txt(cx + 9, cy + 3, label, "small", { style: "fill:" + color + ";paint-order:stroke;stroke:var(--sheet);stroke-width:3px" }, g);
+  };
+  const path = (g, pts, color, extra = {}) => el("polyline", { points: pts.map(([x, y]) => X(x) + "," + Y(y)).join(" "), fill: "none", stroke: color, "stroke-width": 2, "stroke-linejoin": "round", ...extra }, g);
+  Object.entries(SERVICES).forEach(([k, L]) => {
+    const g = el("g", {}); g.style.display = "none"; layerG[k] = g;
+    if (L.tank) { el("rect", { ...rectAttrs(...L.tank), fill: "none", stroke: L.storm, "stroke-width": 1.6, "stroke-dasharray": "4 2" }, g); txt(X(L.tank[0] + L.tank[2] / 2), Y(L.tank[1] + L.tank[3] / 2) + 3, "rain tank", "small", { "text-anchor": "middle", style: "fill:" + L.storm }, g); }
+    (L.stormLines || []).forEach(p => path(g, p, L.storm, { "stroke-dasharray": "6 3" }));
+    (L.dashed || []).forEach(p => path(g, p, L.color, { "stroke-dasharray": "3 3" }));
+    L.lines.forEach(p => path(g, p, L.color));
+    (L.hot || []).forEach(p => path(g, p, "#c8452f"));
+    L.points.forEach(p => sym(g, p, L.color));
+    const b = document.createElement("button");
+    b.className = "chip"; b.id = "layer-" + k; b.setAttribute("aria-pressed", "false");
+    b.innerHTML = '<span class="sw" style="background:' + L.color + '"></span>' + L.label;
+    b.onclick = () => {
+      layerOn[k] = !layerOn[k]; g.style.display = layerOn[k] ? "" : "none"; b.setAttribute("aria-pressed", String(!!layerOn[k]));
+      const notes = Object.keys(SERVICES).filter(n => layerOn[n]).map(n => SERVICES[n].note);
+      if (notes.length && activeRoute) showRoute(null);
+      routeNote.innerHTML = notes.length ? notes.join("<br><br>") + "<br><br><i>Concept routing only: the actual installation drawings come from the mechanical and electrical engineers.</i>" : "Pick a route to trace how a person moves through the house.";
+    };
+    document.getElementById("layerChips").appendChild(b);
+  });
 }
 const routeG = el("g", { id: "routes" });
 

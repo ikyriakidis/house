@@ -2,6 +2,18 @@
 // and the root plan.html / 3d.html always hold the newest one.
 window.HOUSE_VERSIONS = [
   {
+    id: "v4",
+    date: "2026-10-30",
+    title: "Wider garage, flood protection, service layers",
+    changes: [
+      "Garage widened from 6.0 to 6.5 m with a 5.5 m door, sized for the BMW X7 and BMW 1 Series side by side (about 0.9 m on each side and between them).",
+      "The entry hall narrows from 1.5 to 1.2 m and the shower-room/pantry column from 2.1 to 1.9 m; the kitchen gains 0.3 m.",
+      "Flood protection: garage floor 15 cm above the driveway, slot drains at the garage door and the gate, driveway falling to the street, slots for a removable flood barrier.",
+      "New switchable layers on the plan: water, drainage (sewer and rainwater), electrical (with outdoor wall lights) and network; a Services view in 3D.",
+      "Heated area about 200 m²."
+    ]
+  },
+  {
     id: "v3",
     date: "2026-10-30",
     title: "Garage door into the pantry",
