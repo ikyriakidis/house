@@ -135,7 +135,7 @@ table.sched tr.sub td { color: var(--ink-soft); cursor: default; border-bottom: 
 <div class="wrap">
   <header>
     <div>
-      <h1>Split-Wing House Plan · v2</h1>
+      <h1>Split-Wing House Plan · v3</h1>
       <p class="sub">Single storey on a narrow plot (19 × 53 m) with the street on the south. The kids' rooms and the garage face the sunny street side. The office, living room and master bedroom look north across the garden to a pool placed 7 m out, clear of the house's summer shadow. Click any room or route. <a href="3d.html" style="color:var(--accent)">Open the 3D model</a> · <a href="compare.html" style="color:var(--accent)">Compare versions</a> · <a href="index.html" style="color:var(--accent)">Home</a></p>
     </div>
     <div class="meta">
@@ -226,24 +226,24 @@ const ROOMS = [
     note: "The one entrance for everyone: the front door from the street (south) and the door from the garage (east) both open here. It also does the old mudroom's job: coats, shoes, keys and bags are left here before you go into the house.",
     tips: ["A 2 m coat and shoe cupboard on the north wall, plus a bench by the west wall.", "Stone or tile floor: it takes wet shoes from both entrances.", "The garage door must be fire-rated and self-closing.", "A small covered porch keeps the midday sun off the front door."], adj: ["garage", "gallery"] },
   { id: "gallery", name: "Entry Hall", zone: "circ", r: [3.4, 2.4, 1.5, 10.8], label: false,
-    note: "1.5 m hall from the foyer to the great room. The kids' rooms, shared shower room, pantry, storage and tech room open off it. It ends in the living room's reading corner, where the office door is.",
+    note: "1.5 m hall from the foyer to the great room. The kids' rooms, shared shower room, storage and tech room open off it. It ends in the living room's reading corner, where the office door is.",
     tips: ["Add a skylight or two: on a narrow plot the middle of the house gets no side windows.", "Line one wall with shallow built-ins if you want more storage."],
-    adj: ["foyer", "kid1", "kid2", "bath", "pantry", "store", "tech", "living"] },
+    adj: ["foyer", "kid1", "kid2", "bath", "store", "tech", "living"] },
   { id: "bath", name: "Shared Shower Room", zone: "kids", r: [4.9, 2.4, 2.1, 3.6],
     note: "Guest WC with a walk-in shower, also used by the kids. It is the first door off the hall, so guests don't walk deep into the house.",
     tips: ["A linear layout: basin, WC, then a 90 × 120 cm level shower at the far end.", "No outside wall, so use a mechanical extract fan and a sun tube or skylight."], adj: ["gallery"] },
   { id: "pantry", name: "Pantry", zone: "service", r: [4.9, 6.0, 2.1, 2.6],
-    note: "Walk-in pantry with a door from the entry hall and a door into the kitchen. Shopping goes from the car through the foyer and hall straight into the pantry, so you never carry bags across the living room.",
-    tips: ["U-shaped shelves 35 cm deep; one tall bay for a second fridge or freezer.", "Use pocket doors."], adj: ["gallery", "kitchen"] },
+    note: "Walk-in pantry with a door straight from the garage and a door into the kitchen. Park, open the boot, and carry the shopping about 3 m from the car into the pantry. People still come in through the foyer; this door is for unloading.",
+    tips: ["The garage door must be fire-rated and self-closing (most building rules require it between a garage and the house).", "Put a landing shelf right inside the garage door, so bags go straight down.", "Shelves 35 cm deep on the south and west walls, plus one tall bay for a second fridge or freezer.", "Use pocket doors."], adj: ["garage", "kitchen"] },
   { id: "garage", name: "Garage", zone: "service", r: [[7.0, 0, 6.0, 6.5], [7.0, 6.5, 2.4, 2.1]],
-    note: "Two-car garage on the street side. Its only door into the house opens into the foyer, so the garage and the front door arrive in the same place. The old mudroom became a storage bay at the back for bikes, tools and garden things. The garage shades the south side of the kitchen zone in summer.",
+    note: "Two-car garage on the street side. People go into the house through the door to the foyer, the same place as the front door. A second door, at the back by the storage bay, opens straight into the pantry for unloading shopping. The old mudroom became that storage bay, for bikes, tools and garden things. The garage shades the south side of the kitchen zone in summer.",
     tips: ["The door to the foyer is near the front of the garage: park the left car about 0.8 m from the west wall so you can walk past it.", "6.0 × 6.5 m is the practical minimum for two cars. Fold mirrors and use a 4.8–5.0 m wide door.", "In Greece a closed garage may count toward the permitted building area, while a pergola carport usually doesn't. Check with your engineer before you settle on this.", "The garage roof faces south and is free of shade: a good place for some of the solar panels."],
-    adj: ["foyer"] },
+    adj: ["foyer", "pantry"] },
   { id: "laundry", name: "Laundry", zone: "service", r: [9.4, 6.5, 3.6, 2.1],
     note: "Laundry off the back of the kitchen, sharing a wall with the garage rather than with a bedroom or the living room. East window.",
     tips: ["Washer and dryer side by side on the north wall, with a sink and folding counter opposite.", "A solid door keeps the machine noise out of the kitchen.", "Floor drain."], adj: ["kitchen"] },
   { id: "kitchen", name: "Kitchen", zone: "public", r: [4.9, 8.6, 6.1, 3.8], open: true,
-    note: "Island kitchen at the heart of the plan, open to the living room. With no dining room, the island is where everyday meals happen. Nobody comes into the house through the kitchen: the pantry and laundry open off it, and the entrance is in the foyer.",
+    note: "Island kitchen at the heart of the plan, open to the living room. With no dining room, the island is where everyday meals happen. People come in through the foyer. Only the shopping comes in from the garage, through the pantry, which opens off the kitchen together with the laundry.",
     tips: ["Island 2.6 × 1.0 m with four stools along the garden side; leave a 30 cm overhang for knees.", "The kitchen has no outside wall. Raise the roof over the kitchen and add a band of high south-facing windows (a clerestory) on its south side. That brings winter sun deep into the great room, which a north-facing garden otherwise can't give.", "A roof overhang over the clerestory blocks the high summer sun."], adj: ["pantry", "laundry", "living"] },
   { id: "ensuite", name: "En-suite", zone: "master", r: [11.0, 8.6, 2.0, 3.8],
     note: "Linear en-suite with a walk-in shower only, no bathtub. Window on the east.",
@@ -283,7 +283,7 @@ const DOORS = [
   [0, 10.8, 0, 11.6],      // tech outside door
   [1.2, 14.5, 2.1, 14.5],  // dining nook -> office
   [7.0, 0.9, 7.0, 1.8],    // garage -> foyer
-  [4.9, 6.6, 4.9, 7.4],    // hall -> pantry
+  [7.0, 7.0, 7.0, 7.9],    // garage -> pantry (groceries)
   [9.6, 8.6, 10.5, 8.6],   // kitchen -> laundry
   [5.4, 8.6, 6.3, 8.6],    // pantry -> kitchen
   [9.0, 12.9, 9.0, 13.8],  // living -> master lobby
@@ -312,10 +312,10 @@ const POOL = [2.0, 26.0, 9.0, 4.0];
 const SHADOWS = [[1.3, "21 Jun noon · 1.3 m"], [3.8, "21 Mar / 21 Sep noon · 3.8 m"], [8.5, "21 Dec noon · 8.5 m (winter only)"]];
 
 const ROUTES = {
-  grocery: { label: "Groceries", lines: [[[10,3.4],[7.6,1.35],[6.0,1.35],[4.15,2.6],[4.15,7.0],[6.0,7.2],[6.0,10.2],[7.6,10.6]]],
-    note: "<b>Groceries:</b> garage → foyer → 4 m down the hall → pantry → kitchen. About 12 m from the car to the island, and the living room is never crossed." },
+  grocery: { label: "Groceries", lines: [[[8.75,5.6],[8.4,7.45],[6.0,7.45],[6.0,10.2],[7.6,10.6]]],
+    note: "<b>Groceries:</b> from the back of the car, through the storage bay and the door into the pantry, then the kitchen. About 3 m from the boot to the pantry shelves and 6 m to the island, and you never go through the foyer or living room." },
   entry: { label: "Arriving", lines: [[[5.15,-1.6],[5.15,1.2]], [[10,3.4],[7.6,1.35],[5.6,1.35]]],
-    note: "<b>Arriving:</b> whether you come in by the front door or from the garage, you land in the same foyer, take off your shoes and coat, and then go on into the house. Nobody comes in through the kitchen." },
+    note: "<b>Arriving:</b> whether you come in by the front door or from the garage, you land in the same foyer, take off your shoes and coat, and then go on into the house. The garage-to-pantry door is only for unloading shopping." },
   guest: { label: "Guests", lines: [[[5.15,-1.6],[5.15,1.6],[4.15,3.3],[5.9,3.3]]],
     note: "<b>Guests:</b> front door → foyer → the first door off the hall is the shower room. Guests going on to the living room walk straight down the hall." },
   kids: { label: "Kids", lines: [[[1.7,6.0],[4.15,6.0],[4.15,3.3],[5.9,3.3]]],

@@ -2,6 +2,17 @@
 // and the root plan.html / 3d.html always hold the newest one.
 window.HOUSE_VERSIONS = [
   {
+    id: "v3",
+    date: "2026-10-30",
+    title: "Garage door into the pantry",
+    changes: [
+      "New door from the back of the garage (by the storage bay) straight into the pantry, for unloading shopping: about 3 m from the boot to the shelves.",
+      "People still all arrive through the foyer, from the front door or the garage.",
+      "The pantry no longer opens off the entry hall, which frees its west wall for shelves.",
+      "Heated area unchanged at about 204 m²."
+    ]
+  },
+  {
     id: "v2",
     date: "2026-10-30",
     title: "Shared entrance",

@@ -62,7 +62,7 @@ button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
 <div class="wrap">
   <header>
-    <h1>Split-Wing House 3D · v2</h1>
+    <h1>Split-Wing House 3D · v3</h1>
     <p class="sub">A 3D model of the concept plan: 209 m², single storey, street on the south, pool in the north garden. Drag to orbit, scroll or pinch to zoom, right-drag to pan. Room sizes match the <a href="plan.html">floor plan</a>. <a href="compare.html">Compare versions</a> · <a href="index.html">Home</a></p>
   </header>
 
@@ -117,7 +117,7 @@ const ROOMS = [
 const OPEN = new Set(["kitchen|living", "gallery|living", "foyer|gallery"]);
 const DOORS = [
   [4.6, 0, 5.7, 0, "front"], [3.4, 2.8, 3.4, 3.7], [3.4, 5.5, 3.4, 6.4], [4.9, 2.9, 4.9, 3.7], [3.4, 8.6, 3.4, 9.4],
-  [3.4, 10.8, 3.4, 11.6], [0, 10.8, 0, 11.6, "service"], [1.2, 14.5, 2.1, 14.5], [7.0, 0.9, 7.0, 1.8], [4.9, 6.6, 4.9, 7.4],
+  [3.4, 10.8, 3.4, 11.6], [0, 10.8, 0, 11.6, "service"], [1.2, 14.5, 2.1, 14.5], [7.0, 0.9, 7.0, 1.8], [7.0, 7.0, 7.0, 7.9],
   [9.6, 8.6, 10.5, 8.6], [5.4, 8.6, 6.3, 8.6], [9.0, 12.9, 9.0, 13.8], [11.0, 13.1, 11.0, 13.9],
   [11.6, 12.4, 12.5, 12.4], [9.3, 15.0, 10.2, 15.0],
 ];
@@ -586,8 +586,9 @@ place(rug(0.9, 9.0, mat.rugC), 4.15, 7.8);
 // Shared shower room
 place(vanity(1.0), 6.74, 3.25, -90); place(wcPan(), 6.75, 4.35, -90);
 place(shower(1.4, 1.0), 6.3, 5.5); box(5.6, 4.98, 1.0, 0.03, 2.0, 0.03, mat.glass, { group: furn, cast: false });
-// Pantry (door from the hall on its west side) and laundry (door from the kitchen)
-place(shelves(2.4, 2.1, 0.35), 6.8, 7.3, -90); place(shelves(0.9, 2.1, 0.35), 5.1, 8.05, 90);
+// Pantry (door from the garage on its east side, door to the kitchen) and laundry (door from the kitchen)
+place(shelves(2.0, 2.1, 0.35), 5.95, 6.22, 180); place(shelves(2.2, 2.1, 0.35), 5.1, 7.35, 90);
+{ const s = new THREE.Group(); lb(s, 0, 0.9, 0, 0.6, 0.04, 0.4, mat.wood); place(s, 7.25, 6.65, 90); }   // landing shelf in the garage, beside the pantry door
 place(washer(), 11.95, 8.27, 0); place(washer(), 12.6, 8.27, 0);
 place(kitchenRun(2.4), 11.7, 6.82, 180);
 // Kitchen: no outside door any more, tall units run along the whole south wall
@@ -629,7 +630,7 @@ place(car(mat.carBlue), 8.75, 3.45, 0); place(car(mat.carSilver), 11.6, 3.45, 0)
 place(shelves(3.4, 2.0, 0.45), 11.2, 6.25, 0);
 place(shelves(2.2, 2.0, 0.45), 8.2, 8.35, 0);                                       // storage bay (old mudroom)
 { const bike = new THREE.Group(); [-0.5, 0.5].forEach(z => { const w = cy(bike, 0, 0.35, z, 0.34, 0.34, 0.04, mat.tyre, 20); w.rotation.z = Math.PI / 2; });
-  lb(bike, 0, 0.62, 0, 0.04, 0.05, 0.9, mat.carBlue); lb(bike, 0, 0.85, -0.25, 0.2, 0.04, 0.08, mat.black); place(bike, 7.3, 7.5, 0); }
+  lb(bike, 0, 0.62, 0, 0.04, 0.05, 0.9, mat.carBlue); lb(bike, 0, 0.85, -0.25, 0.2, 0.04, 0.08, mat.black); place(bike, 9.05, 7.3, 0); }
 // Terrace and pool
 place(table(2.2, 1.0, mat.darkWood), 10.9, 20.6);
 [10.2, 10.9, 11.6].forEach(x => { place(chair(mat.darkWood), x, 21.35, 180); place(chair(mat.darkWood), x, 19.85, 0); });
@@ -794,7 +795,8 @@ const VIEWS = {
   aerial: { label: "Aerial", pos: [27, 22, 12], target: [6.5, 0, -13], note: "<b>Aerial:</b> the 13 m-wide house between the side hedges, garage and kids' rooms on the street side, pool and garden behind." },
   garden: { label: "From the pool", pos: [5.5, 1.7, -34], target: [6.5, 1.6, -18], note: "<b>From the pool:</b> the north façade with full-height glass to the living room and master bedroom, and the terrace pergola. The office window is on the right." },
   street: { label: "From the street", pos: [2.5, 1.7, 13], target: [7.5, 1.8, 0], note: "<b>From the street:</b> the low front wall, the garage with both cars, and the front door under its canopy." },
-  foyer: { label: "Foyer", pos: [3.9, 1.6, -0.5], target: [7.0, 1.2, -1.6], note: "<b>Foyer:</b> the shared entrance. The front door is behind you, the door from the garage is ahead on the right, and the coat and shoe cupboard is on the left. Both ways in arrive here, so nobody comes in through the kitchen." },
+  foyer: { label: "Foyer", pos: [3.9, 1.6, -0.5], target: [7.0, 1.2, -1.6], note: "<b>Foyer:</b> the shared entrance. The front door is behind you, the door from the garage is ahead on the right, and the coat and shoe cupboard is on the left. Both ways in arrive here. Shopping has its own door from the garage straight into the pantry." },
+  unload: { label: "Garage → pantry", pos: [9.35, 1.6, -8.1], target: [7.0, 1.05, -7.1], note: "<b>Garage → pantry:</b> standing in the storage bay at the back of the garage. The door ahead opens straight into the pantry, with a landing shelf beside it for the bags. The door to the foyer, for people, is at the front of the garage." },
   living: { label: "Living room", pos: [8.6, 1.6, -13.4], target: [3.4, 1.2, -16.6], note: "<b>Living room:</b> from the kitchen island toward the west wall, with the 85\" TV and the fireplace side by side and the north glass on the right." },
   kitchen: { label: "Kitchen", pos: [3.9, 1.65, -14.3], target: [8.5, 1.0, -9.8], note: "<b>Kitchen:</b> from the reading corner: the island with four stools (there's no separate dining room), the cooktop run on the right, tall units and fridge behind, with the raised clerestory windows above." },
   bbq: { label: "BBQ & pool house", pos: [11.8, 1.7, -28.6], target: [5.8, 1.2, -33.2], note: "<b>BBQ & pool house:</b> at the garden end, looking north: the pool WC and the BBQ store, then the covered outdoor kitchen with its masonry barbecue and chimney, and a table for 8. The outdoor shower is on the left." },
