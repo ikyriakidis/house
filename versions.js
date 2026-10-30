@@ -2,6 +2,19 @@
 // and the root plan.html / 3d.html always hold the newest one.
 window.HOUSE_VERSIONS = [
   {
+    id: "v5",
+    date: "2026-10-30",
+    title: "Overflow pool, plant room, drainage, electrical drawing",
+    hasElectrical: true,
+    changes: [
+      "Overflow pool: water level with the deck, grated gutter all round, underground balance tank.",
+      "Pool plant room (μηχανοστάσιο) added to the west end of the pool house: pump, sand filter, salt chlorinator, pool sub-panel; floor about 1 m below the deck.",
+      "Drainage channels: perimeter foundation drain round the house and slot drains at the terrace edge, front door and pool house, all to the rainwater tank or soakaways.",
+      "New electrical drawing (Ηλεκτρολογικό σχέδιο): standard symbols, numbered circuits, legend, and a circuit schedule for the main panel and the pool sub-panel.",
+      "Outdoor shower moved to the east end of the pool deck."
+    ]
+  },
+  {
     id: "v4",
     date: "2026-10-30",
     title: "Wider garage, flood protection, service layers",

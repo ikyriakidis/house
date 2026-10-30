@@ -62,6 +62,11 @@ dd { margin: 2px 0 0; font-family: var(--f-mono); font-size: 14px; font-variant-
       <h2>3D model</h2>
       <p>Furnished model you can orbit, with a flat or Greek tiled roof, solar panels, and sun positions through the year.</p>
     </a>
+    <a class="card" href="electrical.html" lang="el">
+      <span class="eyebrow">Ηλεκτρολογικά</span>
+      <h2>Ηλεκτρολογικό σχέδιο</h2>
+      <p>Κάτοψη με σύμβολα, αριθμημένα κυκλώματα, υπόμνημα και πίνακα κυκλωμάτων του Γενικού Πίνακα και του Υποπίνακα Πισίνας.</p>
+    </a>
     <a class="card" href="compare.html">
       <span class="eyebrow">Side by side</span>
       <h2>Compare versions</h2>
@@ -91,6 +96,6 @@ document.getElementById("versions").innerHTML = window.HOUSE_VERSIONS.map((v, i)
   <li>
     <div class="vhead"><b>${v.id}</b> · ${v.title}${i === 0 ? ' <span class="tag">latest</span>' : ""}</div>
     <ul>${v.changes.map(c => `<li>${c}</li>`).join("")}</ul>
-    <div class="vlinks"><a href="${v.id}/plan.html">Floor plan</a> · <a href="${v.id}/3d.html">3D model</a></div>
+    <div class="vlinks"><a href="${v.id}/plan.html">Floor plan</a> · <a href="${v.id}/3d.html">3D model</a>${v.hasElectrical ? ` · <a href="${v.id}/electrical.html">Electrical drawing</a>` : ""}</div>
   </li>`).join("");
 </script>
