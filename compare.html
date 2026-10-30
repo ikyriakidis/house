@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Compare House Versions</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=Instrument+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: two full-height panes side by side (stacked on phones), each with its own version and view picker */
+:root {
+  --paper: #f2f4f1; --sheet: #fbfcfa; --ink: #1e292c; --ink-soft: #5b676a; --rule: #c9d0cc; --accent: #b5532f;
+  --f-display: "Archivo", "Arial Narrow", system-ui, sans-serif;
+  --f-body: "Instrument Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --paper: #151b1d; --sheet: #1b2326; --ink: #e3e9e6; --ink-soft: #9aa7a8; --rule: #34403f; --accent: #e58a63; color-scheme: dark; }
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  margin: 0; background: var(--paper); color: var(--ink); font: 14px/1.5 var(--f-body);
+  display: grid; grid-template-rows: auto 1fr;
+  padding-left: max(12px, env(safe-area-inset-left, 0px)); padding-right: max(12px, env(safe-area-inset-right, 0px));
+  padding-block: 12px;
+  gap: 10px;
+}
+header { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 6px 16px; }
+h1 { font-family: var(--f-display); font-stretch: 72%; font-weight: 750; font-size: 30px; line-height: 1; margin: 0; }
+header a { color: var(--accent); }
+.panes { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; min-height: 0; }
+@media (max-width: 900px) { .panes { grid-template-columns: 1fr; grid-auto-rows: 85vh; } }
+.pane { display: grid; grid-template-rows: auto auto 1fr; background: var(--sheet); border: 1px solid var(--rule); border-radius: 4px; overflow: hidden; min-height: 0; }
+.bar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; padding: 8px 10px; border-bottom: 1px solid var(--rule); }
+.bar label { font-family: var(--f-display); font-stretch: 80%; text-transform: uppercase; letter-spacing: .08em; font-size: 11px; font-weight: 650; color: var(--ink-soft); }
+select { font: 500 13px var(--f-body); color: var(--ink); background: var(--paper); border: 1px solid var(--rule); border-radius: 3px; padding: 3px 6px; }
+select:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.open { margin-left: auto; color: var(--accent); font-size: 13px; }
+.changes { margin: 0; padding: 6px 12px 8px 28px; font-size: 12.5px; color: var(--ink-soft); border-bottom: 1px solid var(--rule); max-height: 7.5em; overflow: auto; }
+iframe { width: 100%; height: 100%; border: 0; background: var(--paper); min-height: 0; }
+</style>
+<script src="versions.js"></script>
+
+<header>
+  <h1>Compare versions</h1>
+  <span>Pick a version and a view on each side. <a href="index.html">Home</a></span>
+</header>
+<div class="panes">
+  <section class="pane" id="left"></section>
+  <section class="pane" id="right"></section>
+</div>
+
+<script>
+const V = window.HOUSE_VERSIONS;
+const VIEWS = { plan: "Floor plan", "3d": "3D model" };
+const params = new URLSearchParams(location.search);
+function pane(el, side, defVersion, defView) {
+  const ver = params.get(side) || defVersion, view = params.get(side + "View") || defView;
+  el.innerHTML = `
+    <div class="bar">
+      <label for="${side}-v">Version</label>
+      <select id="${side}-v">${V.map(v => `<option value="${v.id}">${v.id} · ${v.title}</option>`).join("")}</select>
+      <label for="${side}-p">View</label>
+      <select id="${side}-p">${Object.entries(VIEWS).map(([k, t]) => `<option value="${k}">${t}</option>`).join("")}</select>
+      <a class="open" target="_blank" rel="noopener">Open full page ↗</a>
+    </div>
+    <ul class="changes"></ul>
+    <iframe title="${side} design"></iframe>`;
+  const vs = el.querySelector("select:nth-of-type(1)"), ps = el.querySelector("select:nth-of-type(2)");
+  vs.value = V.some(v => v.id === ver) ? ver : defVersion; ps.value = VIEWS[view] ? view : defView;
+  const load = () => {
+    const url = `${vs.value}/${ps.value}.html`;
+    el.querySelector("iframe").src = url; el.querySelector(".open").href = url;
+    el.querySelector(".changes").innerHTML = V.find(v => v.id === vs.value).changes.map(c => `<li>${c}</li>`).join("");
+    params.set(side, vs.value); params.set(side + "View", ps.value);
+    history.replaceState(null, "", "?" + params.toString());
+  };
+  vs.onchange = load; ps.onchange = load; load();
+}
+const newest = V[0].id, previous = (V[1] || V[0]).id;
+pane(document.getElementById("left"), "left", previous, "plan");
+pane(document.getElementById("right"), "right", newest, "plan");
+</script>

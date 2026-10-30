@@ -36,6 +36,13 @@ dl { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
 dt { font-family: var(--f-display); font-stretch: 80%; text-transform: uppercase; letter-spacing: .08em; font-size: 11px; color: var(--ink-soft); }
 dd { margin: 2px 0 0; font-family: var(--f-mono); font-size: 14px; font-variant-numeric: tabular-nums; }
 .note { font-size: 13px; color: var(--ink-soft); }
+.vh { font-family: var(--f-display); font-stretch: 75%; font-weight: 700; font-size: 26px; margin: 0 0 10px; }
+.versions { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+.versions > li { background: var(--sheet); border: 1px solid var(--rule); border-radius: 4px; padding: 14px 16px; }
+.vhead b { font-family: var(--f-mono); font-weight: 500; color: var(--accent); }
+.versions ul { margin: 6px 0 8px; padding-left: 18px; color: var(--ink-soft); font-size: 14px; }
+.vlinks a { color: var(--accent); }
+.tag { font-family: var(--f-mono); font-size: 11px; border: 1px solid var(--accent); color: var(--accent); border-radius: 999px; padding: 0 7px; margin-left: 4px; }
 </style>
 
 <main>
@@ -55,12 +62,22 @@ dd { margin: 2px 0 0; font-family: var(--f-mono); font-size: 14px; font-variant-
       <h2>3D model</h2>
       <p>Furnished model you can orbit, with a flat or Greek tiled roof, solar panels, and sun positions through the year.</p>
     </a>
+    <a class="card" href="compare.html">
+      <span class="eyebrow">Side by side</span>
+      <h2>Compare versions</h2>
+      <p>Any two versions next to each other, as floor plans or 3D models, with what changed.</p>
+    </a>
   </div>
+
+  <section aria-labelledby="vh">
+    <h2 id="vh" class="vh">Versions</h2>
+    <ol class="versions" id="versions"></ol>
+  </section>
 
   <dl>
     <div><dt>Plot</dt><dd>1,000 m² · 19 × 53 m</dd></div>
-    <div><dt>Heated area</dt><dd>209 m² (incl. walls)</dd></div>
-    <div><dt>Garage</dt><dd>39 m² · 2 cars</dd></div>
+    <div><dt>Heated area</dt><dd>≈204 m² (incl. walls)</dd></div>
+    <div><dt>Garage</dt><dd>44 m² · 2 cars + storage bay</dd></div>
     <div><dt>Pool</dt><dd>9 × 4 m</dd></div>
     <div><dt>Bedrooms</dt><dd>Master + 2 kids</dd></div>
     <div><dt>Storeys</dt><dd>1</dd></div>
@@ -68,3 +85,12 @@ dd { margin: 2px 0 0; font-family: var(--f-mono); font-size: 14px; font-variant-
 
   <p class="note">Concept sketch for discussion, not a construction drawing. Setbacks, coverage and building factor are assumptions to confirm with the engineer.</p>
 </main>
+<script src="versions.js"></script>
+<script>
+document.getElementById("versions").innerHTML = window.HOUSE_VERSIONS.map((v, i) => `
+  <li>
+    <div class="vhead"><b>${v.id}</b> · ${v.title}${i === 0 ? ' <span class="tag">latest</span>' : ""}</div>
+    <ul>${v.changes.map(c => `<li>${c}</li>`).join("")}</ul>
+    <div class="vlinks"><a href="${v.id}/plan.html">Floor plan</a> · <a href="${v.id}/3d.html">3D model</a></div>
+  </li>`).join("");
+</script>
