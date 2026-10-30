@@ -2,6 +2,19 @@
 // and the root plan.html / 3d.html always hold the newest one.
 window.HOUSE_VERSIONS = [
   {
+    id: "v6",
+    date: "2026-10-30",
+    title: "Pool beside the terrace, bioclimatic pergola",
+    hasElectrical: true,
+    changes: [
+      "Pool moved right up to the terrace: 3.3 m from the living-room glass instead of 7 m, with its overflow gutter meeting the terrace paving.",
+      "Bioclimatic pergola 13 × 5 m with tilting louvres over the whole terrace and the first 2 m of the pool; four posts stand outside the pool.",
+      "Sun shelf: a 30 cm-deep ledge across the near end of the pool, under the pergola.",
+      "Balance tank moved beside the pool's west end; rainwater tank moved under the east deck; loungers on the east deck.",
+      "Electrical drawing: new circuit Ι16 for the pergola (louvre motor, LED strips, rain/wind sensor) and the pool lights moved to the new south wall."
+    ]
+  },
+  {
     id: "v5",
     date: "2026-10-30",
     title: "Overflow pool, plant room, drainage, electrical drawing",

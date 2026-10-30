@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="el">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Split-Wing House Ηλεκτρολογικό</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=Instrument+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: electrical drawing sheet — plan with symbols on the left, legend and supply notes on the right, circuit schedule below */
+:root {
+  --paper: #f2f4f1; --sheet: #fbfcfa; --ink: #1e292c; --ink-soft: #5b676a; --rule: #c9d0cc; --accent: #b5532f;
+  --room: #eef0ec; --wall: #1e292c;
+  --c-light: #c98a00; --c-sock: #2f7fc1; --c-power: #c8452f; --c-weak: #7b4fc4; --c-pool: #16a3b8;
+  --f-display: "Archivo", "Arial Narrow", system-ui, sans-serif;
+  --f-body: "Instrument Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #151b1d; --sheet: #1b2326; --ink: #e3e9e6; --ink-soft: #9aa7a8; --rule: #34403f; --accent: #e58a63;
+    --room: #212a2d; --wall: #e3e9e6; --c-light: #e7a821; --c-sock: #5aa4e0; --c-power: #ea6a52; --c-weak: #a07ee0; --c-pool: #3cc4d6;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #151b1d; --sheet: #1b2326; --ink: #e3e9e6; --ink-soft: #9aa7a8; --rule: #34403f; --accent: #e58a63;
+  --room: #212a2d; --wall: #e3e9e6; --c-light: #e7a821; --c-sock: #5aa4e0; --c-power: #ea6a52; --c-weak: #a07ee0; --c-pool: #3cc4d6;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--paper); color: var(--ink); font-family: var(--f-body); font-size: 15px; line-height: 1.5;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 24px 40px;
+}
+.wrap { max-width: 1240px; margin: 0 auto; display: grid; gap: 20px; }
+h1 { font-family: var(--f-display); font-stretch: 72%; font-weight: 750; font-size: clamp(30px, 5vw, 46px); line-height: 1; margin: 0; letter-spacing: -0.01em; }
+h2 { font-family: var(--f-display); font-stretch: 75%; font-weight: 700; font-size: 24px; margin: 0 0 8px; }
+.sub { color: var(--ink-soft); margin: 6px 0 0; max-width: 72ch; }
+.sub a { color: var(--accent); }
+.grid { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 20px; align-items: start; }
+@media (max-width: 960px) { .grid { grid-template-columns: minmax(0, 1fr); } }
+.sheet { background: var(--sheet); border: 1px solid var(--rule); border-radius: 4px; min-width: 0; }
+.panel { padding: 16px 18px; }
+.controls { display: flex; flex-wrap: wrap; gap: 8px 14px; padding: 12px 16px; border-bottom: 1px solid var(--rule); align-items: center; }
+.lab { font-family: var(--f-display); font-stretch: 80%; text-transform: uppercase; letter-spacing: .08em; font-size: 12px; font-weight: 650; color: var(--ink-soft); }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+button.chip { font: 500 13px var(--f-body); color: var(--ink); background: transparent; border: 1px solid var(--rule); border-radius: 999px; padding: 4px 11px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+button.chip[aria-pressed="true"] { background: var(--ink); color: var(--sheet); border-color: var(--ink); }
+button:focus-visible, tr:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.sw { width: 10px; height: 10px; border-radius: 2px; display: inline-block; }
+.plan-box { overflow-x: auto; display: flex; justify-content: center; }
+svg#el { display: block; width: 100%; max-width: 720px; min-width: 460px; height: auto; }
+.note { padding: 10px 16px; border-top: 1px solid var(--rule); font-size: 13.5px; color: var(--ink-soft); }
+.legend { display: grid; grid-template-columns: 34px 1fr; gap: 6px 10px; align-items: center; font-size: 13px; }
+.legend svg { width: 34px; height: 22px; }
+.notes { margin: 0; padding-left: 18px; font-size: 13.5px; color: var(--ink-soft); }
+.notes li + li { margin-top: 4px; }
+.notes b { color: var(--ink); }
+.tbl { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; font-variant-numeric: tabular-nums; min-width: 720px; }
+th { text-align: left; font-family: var(--f-display); font-stretch: 80%; text-transform: uppercase; letter-spacing: .06em; font-size: 11px; color: var(--ink-soft); padding: 6px 8px; border-bottom: 1px solid var(--rule); }
+td { padding: 5px 8px; border-bottom: 1px solid var(--rule); }
+td.mono { font-family: var(--f-mono); font-size: 12px; white-space: nowrap; }
+tbody tr { cursor: pointer; }
+tbody tr:hover td, tbody tr.sel td { background: color-mix(in srgb, var(--accent) 10%, transparent); }
+tr.grp td { font-weight: 600; background: var(--room); cursor: default; }
+.cid { font-family: var(--f-mono); font-weight: 500; padding: 1px 6px; border-radius: 3px; color: var(--sheet); }
+/* drawing */
+.rm { fill: var(--room); stroke: var(--wall); stroke-width: 1; }
+.rm.out { fill: none; stroke-dasharray: 4 3; }
+.ext { fill: none; stroke: var(--wall); stroke-width: 4; }
+.rn { font-family: var(--f-display); font-stretch: 78%; font-size: 10.5px; font-weight: 650; text-transform: uppercase; letter-spacing: .03em; fill: var(--ink-soft); }
+.ct { font-family: var(--f-mono); font-size: 8.5px; paint-order: stroke; stroke: var(--sheet); stroke-width: 2.5px; }
+.sym { transition: opacity .15s; }
+.dim .sym, .dim .wire { opacity: .12; }
+.dim .sym.hl, .dim .wire.hl { opacity: 1; }
+.wire { fill: none; stroke-width: 1; stroke-dasharray: 3 2; }
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>Ηλεκτρολογικό σχέδιο · v6</h1>
+    <p class="sub">Κάτοψη ισογείου με φωτιστικά σημεία, διακόπτες, ρευματοδότες, παροχές ισχύος, ασθενή ρεύματα και αρίθμηση κυκλωμάτων, μαζί με τον πίνακα κυκλωμάτων του Γενικού Πίνακα (ΓΠ) και του Υποπίνακα Πισίνας (ΥΠ). Πατήστε ένα κύκλωμα στον πίνακα για να φανούν μόνο τα σημεία του. <a href="plan.html">Κάτοψη</a> · <a href="3d.html">Μοντέλο 3D</a> · <a href="../compare.html">Σύγκριση εκδόσεων</a> · <a href="../index.html">Αρχική</a></p>
+  </header>
+
+  <div class="grid">
+    <section class="sheet">
+      <div class="controls">
+        <span class="lab">Εμφάνιση</span>
+        <div class="chips" id="cats"></div>
+      </div>
+      <div class="plan-box"><svg id="el" viewBox="0 0 640 1170" role="img" aria-label="Ηλεκτρολογική κάτοψη με σύμβολα και κυκλώματα"></svg></div>
+      <div class="note" id="selNote">Όλα τα κυκλώματα. Πατήστε μια γραμμή του πίνακα κυκλωμάτων για να απομονώσετε ένα κύκλωμα.</div>
+    </section>
+    <aside style="display:grid;gap:20px">
+      <section class="sheet panel">
+        <h2>Υπόμνημα</h2>
+        <div class="legend" id="legend"></div>
+      </section>
+      <section class="sheet panel">
+        <h2>Παροχή και προστασία</h2>
+        <ul class="notes">
+          <li><b>Παροχή ΔΕΗ τριφασική</b>, εκτίμηση Νο 4–5 (25–35 kVA) λόγω αντλίας θερμότητας, φορτιστή EV, εστιών επαγωγής και πισίνας. Η τελική επιλογή γίνεται με υπολογισμό ισχύος από τον ηλεκτρολόγο μηχανικό.</li>
+          <li><b>Μετρητής</b> στο όριο του οικοπέδου· υπόγεια γραμμή NYY κατά μήκος του δυτικού διαδρόμου προς τον <b>ΓΠ</b> στον τεχνικό χώρο.</li>
+          <li><b>Γενικός διακόπτης</b> 4P, <b>απαγωγός υπερτάσεων</b> Τύπου 2, <b>διαφορικά 30 mA</b> για όλα τα κυκλώματα ρευματοδοτών, λουτρών και εξωτερικών χώρων· διαφορικό <b>Τύπου B</b> (ή 6 mA DC) για τον φορτιστή EV.</li>
+          <li><b>Θεμελιακή γείωση</b> στα θεμέλια, κύρια ισοδυναμική σύνδεση στον ΓΠ, συμπληρωματικές ισοδυναμικές στα λουτρά και στον <b>οπλισμό της πισίνας</b>.</li>
+          <li><b>Πισίνα:</b> στις ζώνες 0 και 1 μόνο φωτισμός <b>SELV 12 V</b> (IP68) με τον μετασχηματιστή εκτός ζωνών, στο μηχανοστάσιο. Ο ΥΠ έχει δικά του διαφορικά 30 mA.</li>
+          <li><b>Φωτοβολταϊκά:</b> DC από το δώμα στον inverter στον τεχνικό χώρο, με μπαταρίες· ο inverter συνδέεται στον ΓΠ (κύκλωμα Ι12) με διακόπτη απομόνωσης.</li>
+          <li>Καλώδια ισχυρών: φωτισμός 3×1,5 mm², ρευματοδότες 3×2,5 mm², μέσα σε σωλήνες στην οροφή και στους τοίχους· ασθενή σε ξεχωριστές σωληνώσεις.</li>
+        </ul>
+        <p class="sub" style="font-size:12.5px">Προμελέτη για συζήτηση· η μελέτη ηλεκτρολογικών και η υπεύθυνη δήλωση εγκαταστάτη γίνονται από αδειούχο ηλεκτρολόγο.</p>
+      </section>
+    </aside>
+  </div>
+
+  <section class="sheet panel">
+    <h2>Πίνακας κυκλωμάτων</h2>
+    <div class="tbl"><table id="tbl">
+      <thead><tr><th>Κύκλωμα</th><th>Περιγραφή</th><th>Ασφάλεια</th><th>Καλώδιο</th><th>Φάση</th><th>Προστασία</th><th>Σημεία</th></tr></thead>
+      <tbody></tbody>
+    </table></div>
+  </section>
+</div>
+
+<script>
+// House coordinates in metres (x east from the west wall, y north from the street wall), same as the floor plan v5.
+const S = 30, OX = 85, OY = 22, YMAX = 35.4;
+const X = m => OX + m * S, Y = m => OY + (YMAX - m) * S;
+const svg = document.getElementById("el"), NS = "http://www.w3.org/2000/svg";
+const el = (t, a = {}, p = svg) => { const n = document.createElementNS(NS, t); for (const k in a) n.setAttribute(k, a[k]); p.appendChild(n); return n; };
+const R = (x, y, w, h) => ({ x: X(x), y: Y(y + h), width: w * S, height: h * S });
+
+const ROOMS = [
+  ["Υπνοδ. 1", 0, 0, 3.4, 4], ["Υπνοδ. 2", 0, 4, 3.4, 4], ["Αποθήκη", 0, 8, 3.4, 2], ["Τεχνικός χώρος", 0, 10, 3.4, 2.4],
+  ["Γωνιά ανάγνωσης", 0, 12.4, 3.4, 2.1], ["Γραφείο", 0, 14.5, 3.4, 4.6], ["Είσοδος", 3.4, 0, 3.1, 2.4], ["", 3.4, 2.4, 1.2, 10.8],
+  ["Λουτρό", 4.6, 2.4, 1.9, 3.6], ["Κελάρι", 4.6, 6, 1.9, 2.6], ["Γκαράζ", 6.5, 0, 6.5, 6.5], ["", 6.5, 6.5, 2.9, 2.1],
+  ["Πλυσταριό", 9.4, 6.5, 3.6, 2.1], ["Κουζίνα", 4.6, 8.6, 6.4, 3.8], ["Λουτρό master", 11, 8.6, 2, 3.8],
+  ["", 4.6, 12.4, 4.4, 2.4], ["", 3.4, 13.2, 1.2, 1.6], ["Καθιστικό", 3.4, 14.8, 5.6, 4.3], ["", 9, 12.4, 2, 2.6], ["Ντουλάπα", 11, 12.4, 2, 2.6],
+  ["Υπνοδ. master", 9, 15, 4, 4.1],
+  ["Μηχανοστάσιο", 0.3, 32, 2.2, 2.2], ["WC", 2.5, 32, 1.6, 2.2], ["Αποθ.", 4.1, 32, 1.6, 2.2],
+];
+const OUTDOOR = [["BBQ", 5.7, 31.6, 4.2, 2.6], ["", 0, 19.1, 13, 5]];
+const POOL = [2, 22.4, 9, 4];   // pergola-v6
+
+// Circuits: id, group, category, description, breaker, cable, phase, protection
+const CIRCUITS = [
+  ["Φ1", "ΓΠ", "light", "Φωτισμός καθιστικού, κουζίνας, γωνιάς ανάγνωσης", "10 A", "3×1,5", "L1", "—"],
+  ["Φ2", "ΓΠ", "light", "Φωτισμός παιδικών, λουτρού, διαδρόμου, εισόδου", "10 A", "3×1,5", "L2", "—"],
+  ["Φ3", "ΓΠ", "light", "Φωτισμός master suite και γραφείου", "10 A", "3×1,5", "L3", "—"],
+  ["Φ4", "ΓΠ", "light", "Φωτισμός βοηθητικών: τεχνικός, αποθήκη, κελάρι, πλυσταριό, γκαράζ", "10 A", "3×1,5", "L1", "—"],
+  ["Φ5", "ΓΠ", "light", "Εξωτερικός φωτισμός: χελώνες προσόψεων, κολωνάκια κήπου (χρονοδιακόπτης/φωτοκύτταρο)", "10 A", "3×1,5", "L2", "Διαφ. 30 mA"],
+  ["Ρ1", "ΓΠ", "sock", "Ρευματοδότες καθιστικού και γωνιάς ανάγνωσης", "16 A", "3×2,5", "L1", "Διαφ. 30 mA"],
+  ["Ρ2", "ΓΠ", "sock", "Ρευματοδότες πάγκου κουζίνας και νησίδας", "16 A", "3×2,5", "L2", "Διαφ. 30 mA"],
+  ["Ρ3", "ΓΠ", "sock", "Ρευματοδότες υπνοδωματίων παιδιών", "16 A", "3×2,5", "L3", "Διαφ. 30 mA"],
+  ["Ρ4", "ΓΠ", "sock", "Ρευματοδότες master suite, ντουλάπας, λουτρού master", "16 A", "3×2,5", "L1", "Διαφ. 30 mA"],
+  ["Ρ5", "ΓΠ", "sock", "Ρευματοδότες γραφείου (δύο θέσεις εργασίας, εκτυπωτής)", "16 A", "3×2,5", "L2", "Διαφ. 30 mA"],
+  ["Ρ6", "ΓΠ", "sock", "Ρευματοδότες εισόδου, διαδρόμου, λουτρού, κελαριού", "16 A", "3×2,5", "L3", "Διαφ. 30 mA"],
+  ["Ρ7", "ΓΠ", "sock", "Ρευματοδότες πλυσταριού, αποθήκης, τεχνικού χώρου, γκαράζ", "16 A", "3×2,5", "L1", "Διαφ. 30 mA"],
+  ["Ι1", "ΓΠ", "power", "Εστίες επαγωγής", "3×16 A", "5×2,5", "L1-L2-L3", "Διαφ. 30 mA"],
+  ["Ι2", "ΓΠ", "power", "Φούρνος", "16 A", "3×2,5", "L2", "Διαφ. 30 mA"],
+  ["Ι3", "ΓΠ", "power", "Πλυντήριο πιάτων", "16 A", "3×2,5", "L3", "Διαφ. 30 mA"],
+  ["Ι4", "ΓΠ", "power", "Ψυγείο και καταψύκτης", "16 A", "3×2,5", "L1", "Διαφ. 30 mA"],
+  ["Ι5", "ΓΠ", "power", "Πλυντήριο ρούχων", "16 A", "3×2,5", "L2", "Διαφ. 30 mA"],
+  ["Ι6", "ΓΠ", "power", "Στεγνωτήριο", "16 A", "3×2,5", "L3", "Διαφ. 30 mA"],
+  ["Ι7", "ΓΠ", "power", "Αντλία θερμότητας (εξωτερική μονάδα)", "3×20 A", "5×4", "L1-L2-L3", "Διαφ. 30 mA"],
+  ["Ι8", "ΓΠ", "power", "Εφεδρική ηλεκτρική αντίσταση boiler ΖΝΧ", "16 A", "3×2,5", "L1", "Διαφ. 30 mA"],
+  ["Ι9", "ΓΠ", "power", "Κλιματιστικά, εξωτερική μονάδα 1 (καθιστικό, γραφείο, master)", "20 A", "3×4", "L2", "Διαφ. 30 mA"],
+  ["Ι10", "ΓΠ", "power", "Κλιματιστικά, εξωτερική μονάδα 2 (παιδικά)", "16 A", "3×2,5", "L3", "Διαφ. 30 mA"],
+  ["Ι11", "ΓΠ", "power", "Φορτιστής ηλεκτρικού αυτοκινήτου 11 kW", "3×20 A", "5×6", "L1-L2-L3", "Διαφ. Τύπου B"],
+  ["Ι12", "ΓΠ", "power", "Inverter φωτοβολταϊκών και μπαταρίες", "3×25 A", "5×6", "L1-L2-L3", "Διακ. απομόνωσης"],
+  ["Ι13", "ΓΠ", "power", "Rack δικτύου και UPS", "16 A", "3×2,5", "L2", "—"],
+  ["Ι14", "ΓΠ", "power", "Τροφοδοσία Υποπίνακα Πισίνας (ΥΠ), υπόγεια", "3×25 A", "NYY 5×6", "L1-L2-L3", "Επιλεκτικό διαφ."],
+  ["Ι15", "ΓΠ", "power", "Ανιχνευτές καπνού/θερμότητας, συναγερμός", "10 A", "3×1,5", "L3", "—"],
+  ["Ι16", "ΓΠ", "power", "Βιοκλιματική πέργκολα: μοτέρ περσίδων, LED, αισθητήρας βροχής/ανέμου", "10 A", "3×1,5", "L1", "Διαφ. 30 mA"],
+  ["Π1", "ΥΠ", "pool", "Αντλία φίλτρανσης πισίνας", "16 A", "3×2,5", "L1", "Διαφ. 30 mA"],
+  ["Π2", "ΥΠ", "pool", "Αλατόλυση και δοσομετρικό pH", "10 A", "3×1,5", "L2", "Διαφ. 30 mA"],
+  ["Π3", "ΥΠ", "pool", "Φωτισμός πισίνας SELV 12 V (μετασχηματιστής στο μηχανοστάσιο)", "10 A", "3×1,5 / 2×6 (12 V)", "L3", "Διαφ. 30 mA"],
+  ["Π4", "ΥΠ", "pool", "Φωτισμός pool house, BBQ, χελώνα", "10 A", "3×1,5", "L1", "Διαφ. 30 mA"],
+  ["Π5", "ΥΠ", "pool", "Ρευματοδότες pool house και BBQ", "16 A", "3×2,5", "L2", "Διαφ. 30 mA"],
+  ["Π6", "ΥΠ", "pool", "Αντλία θερμότητας πισίνας (προαιρετική)", "16 A", "3×2,5", "L3", "Διαφ. 30 mA"],
+  ["Α1", "Ασθενή", "weak", "Δομημένη καλωδίωση Cat6 από το rack, σημεία δεδομένων", "—", "Cat6", "—", "—"],
+  ["Α2", "Ασθενή", "weak", "Σημεία τηλεόρασης / δορυφορικής", "—", "Ομοαξονικό", "—", "—"],
+  ["Α3", "Ασθενή", "weak", "Ασύρματα σημεία πρόσβασης Wi-Fi (PoE)", "—", "Cat6", "—", "—"],
+  ["Α4", "Ασθενή", "weak", "Κάμερες CCTV (PoE) και θυροτηλεόραση", "—", "Cat6", "—", "—"],
+];
+
+// Symbols: [kind, x, y, circuit, label]. Kinds: L light, W outdoor wall light (χελώνα), B garden bollard, SW switch, SW2 two-way switch,
+// S socket, P power point, P3 three-phase power point, AC air-con point, SD smoke detector, D data, TV, AP Wi-Fi, CAM, PNL panel, PL pool light
+const P = [
+  ["PNL", 2.6, 10.25, "ΓΠ", "ΓΠ"], ["PNL", 1.4, 32.4, "ΥΠ", "ΥΠ"], ["PNL", 0.5, -1.2, "ΔΕΗ", "ΔΕΗ"],
+  ["L", 5.0, 16.0, "Φ1"], ["L", 7.6, 16.0, "Φ1"], ["L", 6.8, 13.6, "Φ1"], ["L", 6.0, 10.5, "Φ1"], ["L", 9.6, 10.5, "Φ1"], ["L", 7.4, 11.2, "Φ1", "κρεμ."], ["L", 8.8, 11.2, "Φ1"], ["L", 1.7, 13.45, "Φ1"],
+  ["SW", 4.75, 13.3, "Φ1"], ["SW", 6.45, 8.8, "Φ1"], ["SW2", 8.85, 12.7, "Φ1"], ["SW2", 8.85, 18.9, "Φ1"],
+  ["L", 1.7, 2.0, "Φ2"], ["L", 1.7, 6.0, "Φ2"], ["L", 5.55, 3.3, "Φ2"], ["L", 5.55, 5.3, "Φ2", "IP65"], ["L", 4.0, 4.0, "Φ2"], ["L", 4.0, 7.5, "Φ2"], ["L", 4.0, 11.0, "Φ2"], ["L", 5.0, 1.2, "Φ2"],
+  ["SW", 3.25, 2.6, "Φ2"], ["SW", 3.25, 5.3, "Φ2"], ["SW", 4.75, 2.75, "Φ2"], ["SW2", 3.55, 2.55, "Φ2"], ["SW2", 3.55, 13.0, "Φ2"], ["SW", 5.85, 0.2, "Φ2"],
+  ["L", 1.7, 15.8, "Φ3"], ["L", 1.7, 17.8, "Φ3"], ["L", 11.0, 17.0, "Φ3"], ["L", 10.0, 13.7, "Φ3"], ["L", 12.0, 13.7, "Φ3"], ["L", 12.0, 9.6, "Φ3", "IP65"], ["L", 12.0, 11.4, "Φ3"],
+  ["SW", 2.25, 14.65, "Φ3"], ["SW2", 10.35, 15.15, "Φ3"], ["SW2", 12.85, 18.6, "Φ3"], ["SW", 9.15, 14.0, "Φ3"], ["SW", 11.15, 14.05, "Φ3"], ["SW", 12.65, 12.25, "Φ3"],
+  ["L", 1.7, 9.0, "Φ4"], ["L", 1.7, 11.2, "Φ4"], ["L", 5.55, 7.3, "Φ4"], ["L", 11.2, 7.55, "Φ4"], ["L", 8.3, 2.0, "Φ4"], ["L", 11.2, 2.0, "Φ4"], ["L", 8.3, 4.8, "Φ4"], ["L", 11.2, 4.8, "Φ4"], ["L", 7.9, 7.5, "Φ4"],
+  ["SW", 3.25, 8.45, "Φ4"], ["SW", 3.25, 10.65, "Φ4"], ["SW", 6.35, 8.1, "Φ4"], ["SW", 10.65, 8.45, "Φ4"], ["SW", 6.65, 2.1, "Φ4"],
+  ["W", 4.35, -0.15, "Φ5"], ["W", 5.95, -0.15, "Φ5"], ["W", 6.8, -0.15, "Φ5"], ["W", 12.75, -0.15, "Φ5"], ["W", -0.15, 6.0, "Φ5"], ["W", -0.15, 11.2, "Φ5"],
+  ["W", 13.15, 5.0, "Φ5"], ["W", 13.15, 10.0, "Φ5"], ["W", 2.0, 19.25, "Φ5"], ["W", 9.2, 19.25, "Φ5"], ["W", 12.8, 19.25, "Φ5"],
+  ["B", 0.4, 27.7, "Φ5"], ["B", 14.6, 27.7, "Φ5"], ["B", 14.2, 22.4, "Φ5"],
+  ["L", 3.2, 21.5, "Ι16", "LED"], ["L", 6.5, 21.5, "Ι16"], ["L", 9.8, 21.5, "Ι16"], ["P", 12.9, 21.5, "Ι16", "μοτέρ"], ["SW", 8.85, 19.25, "Ι16"],
+  ["S", 3.6, 15.4, "Ρ1"], ["S", 3.6, 17.0, "Ρ1"], ["S", 8.85, 15.8, "Ρ1"], ["S", 8.85, 18.2, "Ρ1"], ["S", 2.8, 12.55, "Ρ1"], ["S", 5.0, 12.6, "Ρ1"],
+  ["S", 4.75, 9.4, "Ρ2"], ["S", 4.75, 11.6, "Ρ2"], ["S", 8.1, 10.3, "Ρ2", "νησίδα"],
+  ["S", 0.9, 0.15, "Ρ3"], ["S", 2.6, 0.15, "Ρ3"], ["S", 0.15, 3.7, "Ρ3"], ["S", 0.9, 4.15, "Ρ3"], ["S", 2.6, 4.15, "Ρ3"], ["S", 0.15, 7.7, "Ρ3"],
+  ["S", 9.75, 15.15, "Ρ4"], ["S", 12.25, 15.15, "Ρ4"], ["S", 12.85, 17.4, "Ρ4"], ["S", 9.15, 18.5, "Ρ4"], ["S", 12.85, 11.2, "Ρ4", "ξυριστ."], ["S", 12.0, 12.55, "Ρ4"],
+  ["S", 3.25, 15.2, "Ρ5"], ["S", 3.25, 16.4, "Ρ5"], ["S", 3.25, 17.2, "Ρ5"], ["S", 3.25, 18.4, "Ρ5"], ["S", 0.15, 16.9, "Ρ5"],
+  ["S", 3.55, 1.5, "Ρ6"], ["S", 3.55, 7.0, "Ρ6"], ["S", 6.35, 3.25, "Ρ6", "ξυριστ."], ["S", 4.75, 7.8, "Ρ6"],
+  ["S", 10.8, 6.65, "Ρ7"], ["S", 0.15, 9.0, "Ρ7"], ["S", 2.0, 10.15, "Ρ7"], ["S", 6.65, 4.0, "Ρ7"], ["S", 12.85, 5.6, "Ρ7"], ["S", 7.0, 8.45, "Ρ7"],
+  ["P3", 4.75, 10.6, "Ι1", "εστίες"], ["P", 8.5, 8.75, "Ι2", "φούρνος"], ["P", 8.95, 10.35, "Ι3", "ΠΠ"], ["P", 6.98, 8.75, "Ι4", "ψυγ."],
+  ["P", 11.95, 8.45, "Ι5", "ΠΡ"], ["P", 12.6, 8.45, "Ι6", "ΣΤ"], ["P3", 13.42, 7.45, "Ι7", "ΑΘ"], ["P", 9.8, 6.95, "Ι8", "boiler"],
+  ["AC", 13.35, 4.4, "Ι9", "ΕΜ1"], ["AC", 8.88, 17.0, "Ι9"], ["AC", 2.6, 14.62, "Ι9"], ["AC", 9.12, 17.6, "Ι9"],
+  ["AC", 13.35, 3.2, "Ι10", "ΕΜ2"], ["AC", 1.8, 3.88, "Ι10"], ["AC", 1.8, 7.88, "Ι10"],
+  ["P3", 12.85, 3.0, "Ι11", "EV"], ["PNL", 1.2, 10.15, "Ι12", "INV"], ["P", 0.3, 11.1, "Ι12", "BAT"], ["P", 2.3, 12.2, "Ι13", "rack"],
+  ["SD", 4.0, 9.5, "Ι15"], ["SD", 6.0, 17.6, "Ι15"], ["SD", 1.7, 2.8, "Ι15"], ["SD", 1.7, 6.8, "Ι15"], ["SD", 11.0, 16.2, "Ι15"], ["SD", 7.9, 9.3, "Ι15", "θερμ."],
+  ["P", 0.85, 33.45, "Π1", "αντλία"], ["P", 1.85, 33.95, "Π2", "αλατ."], ["PL", 4.5, 22.52, "Π3"], ["PL", 8.5, 22.52, "Π3"],
+  ["L", 1.4, 33.0, "Π4"], ["L", 3.3, 33.1, "Π4"], ["L", 4.9, 33.1, "Π4"], ["L", 7.2, 32.9, "Π4"], ["L", 9.0, 32.9, "Π4"], ["W", 4.0, 31.85, "Π4"],
+  ["S", 6.2, 34.0, "Π5"], ["S", 9.3, 34.0, "Π5"], ["S", 3.6, 33.95, "Π5"], ["P", 0.15, 33.1, "Π6", "ΑΘ πισ."],
+  ["D", 3.25, 15.85, "Α1"], ["D", 3.25, 17.75, "Α1"], ["D", 3.6, 16.25, "Α1"], ["D", 9.15, 17.0, "Α1"], ["D", 1.7, 0.15, "Α1"], ["D", 1.7, 4.15, "Α1"],
+  ["TV", 3.6, 16.7, "Α2"], ["TV", 9.15, 17.5, "Α2"],
+  ["AP", 4.0, 6.2, "Α3"], ["AP", 6.6, 14.2, "Α3"], ["AP", 5.0, 31.85, "Α3"],
+  ["CAM", 3.5, -0.15, "Α4"], ["CAM", 12.95, -0.15, "Α4"], ["CAM", -0.15, 12.5, "Α4"], ["CAM", 13.15, 7.0, "Α4"], ["CAM", 12.95, 19.25, "Α4"], ["CAM", 2.5, 31.85, "Α4"], ["D", 3.55, 0.6, "Α4", "θυροτ."],
+];
+
+const CAT = { light: "var(--c-light)", sock: "var(--c-sock)", power: "var(--c-power)", weak: "var(--c-weak)", pool: "var(--c-pool)" };
+const circ = Object.fromEntries(CIRCUITS.map(c => [c[0], c]));
+const colorOf = id => circ[id] ? CAT[circ[id][2]] : "var(--ink)";
+
+// ---------- base drawing ----------
+OUTDOOR.forEach(([n, x, y, w, h]) => { el("rect", { ...R(x, y, w, h), class: "rm out" }); el("text", { x: X(x + w / 2), y: Y(y + h / 2) + 4, class: "rn", "text-anchor": "middle" }).textContent = n; });
+el("rect", { ...R(...POOL), fill: "none", stroke: "var(--c-pool)", "stroke-width": 1.5 });
+el("rect", { ...R(POOL[0] - 0.25, POOL[1] - 0.25, POOL[2] + 0.5, POOL[3] + 0.5), fill: "none", stroke: "var(--c-pool)", "stroke-dasharray": "2 2" });
+el("text", { x: X(6.5), y: Y(25) + 4, class: "rn", "text-anchor": "middle" }).textContent = "Πισίνα υπερχείλισης";
+el("text", { x: X(6.5), y: Y(21.6), class: "rn", "text-anchor": "middle" }).textContent = "Βεράντα · βιοκλιματική πέργκολα 13 × 5 m";
+ROOMS.forEach(([n, x, y, w, h]) => {
+  el("rect", { ...R(x, y, w, h), class: "rm" });
+  if (n) el("text", { x: X(x + w / 2), y: Y(y + h) + 13, class: "rn", "text-anchor": "middle" }).textContent = n;
+});
+el("rect", { ...R(0, 0, 13, 19.1), class: "ext" });
+el("rect", { ...R(0.3, 32, 5.4, 2.2), class: "ext", "stroke-width": 3 });
+el("text", { x: X(6.5), y: Y(29.6), class: "rn", "text-anchor": "middle" }).textContent = "Κήπος (υπόγειες γραμμές προς pool house)";
+// supply and buried feeds
+el("polyline", { points: [[0.5, -1.2], [-0.6, -1.2], [-0.6, 10.25], [2.6, 10.25]].map(([x, y]) => X(x) + "," + Y(y)).join(" "), fill: "none", stroke: "var(--ink)", "stroke-width": 1.6, "stroke-dasharray": "8 3" });
+el("polyline", { points: [[2.6, 10.25], [-0.6, 10.25], [-0.6, 31.4], [1.4, 31.4], [1.4, 32.4]].map(([x, y]) => X(x) + "," + Y(y)).join(" "), fill: "none", stroke: "var(--c-power)", "stroke-width": 1.6, "stroke-dasharray": "8 3" });
+el("text", { x: X(-0.9), y: Y(20), class: "ct", fill: "var(--c-power)", transform: `rotate(-90 ${X(-0.9)} ${Y(20)})`, "text-anchor": "middle" }).textContent = "Ι14 · NYY 5×6 υπόγεια προς ΥΠ";
+el("text", { x: X(-0.9), y: Y(4.5), class: "ct", fill: "var(--ink)", transform: `rotate(-90 ${X(-0.9)} ${Y(4.5)})`, "text-anchor": "middle" }).textContent = "Παροχή ΔΕΗ · υπόγεια";
+el("text", { x: X(13.2), y: Y(-1.2) + 3, class: "rn" }).textContent = "↓ Δρόμος (Ν)";
+const cg = el("g", { transform: `translate(${X(14.9)}, ${Y(34.4)})` });
+el("circle", { r: 15, fill: "none", stroke: "var(--ink-soft)" }, cg); el("path", { d: "M 0 -12 L 4 3 L 0 0 L -4 3 Z", fill: "var(--accent)" }, cg);
+el("text", { y: -19, "text-anchor": "middle", class: "rn", style: "fill:var(--ink)" }, cg).textContent = "Β";
+
+// ---------- wiring (dashed arcs between the points of each circuit) ----------
+const wiresG = el("g", {}), symG = el("g", {});
+const byCirc = {};
+P.forEach(p => { (byCirc[p[3]] = byCirc[p[3]] || []).push(p); });
+Object.entries(byCirc).forEach(([id, pts]) => {
+  if (!circ[id]) return;
+  for (let i = 1; i < pts.length; i++) {
+    const [, x1, y1] = pts[i - 1], [, x2, y2] = pts[i];
+    const mx = (X(x1) + X(x2)) / 2, my = (Y(y1) + Y(y2)) / 2, dx = X(x2) - X(x1), dy = Y(y2) - Y(y1);
+    el("path", { d: `M ${X(x1)} ${Y(y1)} Q ${mx - dy * 0.18} ${my + dx * 0.18} ${X(x2)} ${Y(y2)}`, class: "wire", stroke: colorOf(id), "data-c": id }, wiresG);
+  }
+});
+
+// ---------- symbols ----------
+function symbol(kind, x, y, color, g) {
+  const cx = X(x), cy = Y(y), st = { stroke: color, "stroke-width": 1.4, fill: "var(--sheet)" };
+  switch (kind) {
+    case "L": el("circle", { cx, cy, r: 6, ...st }, g); el("path", { d: `M ${cx - 4.2} ${cy - 4.2} L ${cx + 4.2} ${cy + 4.2} M ${cx - 4.2} ${cy + 4.2} L ${cx + 4.2} ${cy - 4.2}`, stroke: color, "stroke-width": 1.2 }, g); break;
+    case "PL": el("circle", { cx, cy, r: 6, ...st, fill: color }, g); el("path", { d: `M ${cx - 4} ${cy - 4} L ${cx + 4} ${cy + 4} M ${cx - 4} ${cy + 4} L ${cx + 4} ${cy - 4}`, stroke: "var(--sheet)", "stroke-width": 1.2 }, g); break;
+    case "W": el("ellipse", { cx, cy, rx: 7, ry: 4, ...st, fill: color }, g); el("line", { x1: cx - 5, y1: cy, x2: cx + 5, y2: cy, stroke: "var(--sheet)", "stroke-width": 1 }, g); break;
+    case "B": el("circle", { cx, cy, r: 4, ...st, fill: color }, g); el("circle", { cx, cy, r: 7, fill: "none", stroke: color }, g); break;
+    case "SW": el("circle", { cx, cy, r: 2.6, fill: color }, g); el("line", { x1: cx, y1: cy, x2: cx + 7, y2: cy - 7, stroke: color, "stroke-width": 1.4 }, g); el("line", { x1: cx + 7, y1: cy - 7, x2: cx + 9.5, y2: cy - 4.5, stroke: color, "stroke-width": 1.4 }, g); break;
+    case "SW2": el("circle", { cx, cy, r: 2.6, fill: color }, g); [[7, -7, 9.5, -4.5], [-7, 7, -9.5, 4.5]].forEach(([a, b, c, d]) => { el("line", { x1: cx, y1: cy, x2: cx + a, y2: cy + b, stroke: color, "stroke-width": 1.4 }, g); el("line", { x1: cx + a, y1: cy + b, x2: cx + c, y2: cy + d, stroke: color, "stroke-width": 1.4 }, g); }); break;
+    case "S": el("path", { d: `M ${cx - 6} ${cy + 2} A 6 6 0 0 1 ${cx + 6} ${cy + 2} Z`, ...st }, g); el("line", { x1: cx - 6, y1: cy + 4, x2: cx + 6, y2: cy + 4, stroke: color, "stroke-width": 1.4 }, g); break;
+    case "P": el("path", { d: `M ${cx - 6} ${cy + 2} A 6 6 0 0 1 ${cx + 6} ${cy + 2} Z`, ...st, fill: color }, g); el("line", { x1: cx - 6, y1: cy + 4, x2: cx + 6, y2: cy + 4, stroke: color, "stroke-width": 1.4 }, g); break;
+    case "P3": el("path", { d: `M ${cx - 7} ${cy + 2} A 7 7 0 0 1 ${cx + 7} ${cy + 2} Z`, ...st, fill: color }, g); [-3, 0, 3].forEach(o => el("line", { x1: cx + o, y1: cy + 4, x2: cx + o, y2: cy + 8, stroke: color, "stroke-width": 1.2 }, g)); break;
+    case "AC": el("rect", { x: cx - 7, y: cy - 4.5, width: 14, height: 9, ...st }, g); el("text", { x: cx, y: cy + 3, "text-anchor": "middle", class: "ct", fill: color, style: "stroke:none;font-size:7px" }, g).textContent = "AC"; break;
+    case "SD": el("circle", { cx, cy, r: 5.5, ...st }, g); el("text", { x: cx, y: cy + 3, "text-anchor": "middle", class: "ct", fill: color, style: "stroke:none;font-size:7.5px" }, g).textContent = "K"; break;
+    case "D": el("path", { d: `M ${cx} ${cy - 6} L ${cx + 6} ${cy + 4} L ${cx - 6} ${cy + 4} Z`, ...st }, g); break;
+    case "TV": el("rect", { x: cx - 6, y: cy - 4.5, width: 12, height: 9, ...st }, g); el("text", { x: cx, y: cy + 3, "text-anchor": "middle", class: "ct", fill: color, style: "stroke:none;font-size:6.5px" }, g).textContent = "TV"; break;
+    case "AP": el("circle", { cx, cy, r: 6.5, ...st }, g); el("text", { x: cx, y: cy + 3, "text-anchor": "middle", class: "ct", fill: color, style: "stroke:none;font-size:7px" }, g).textContent = "W"; break;
+    case "CAM": el("rect", { x: cx - 6, y: cy - 3.5, width: 9, height: 7, ...st, fill: color }, g); el("path", { d: `M ${cx + 3} ${cy - 3} L ${cx + 7} ${cy - 5} L ${cx + 7} ${cy + 5} L ${cx + 3} ${cy + 3} Z`, fill: color }, g); break;
+    case "PNL": el("rect", { x: cx - 11, y: cy - 6, width: 22, height: 12, fill: color, stroke: color }, g); break;
+  }
+}
+P.forEach(([kind, x, y, id, label]) => {
+  const color = colorOf(id), g = el("g", { class: "sym", "data-c": id, "data-k": circ[id] ? circ[id][2] : "panel" }, symG);
+  symbol(kind, x, y, color, g);
+  if (kind === "PNL") { el("text", { x: X(x), y: Y(y) + 3.2, "text-anchor": "middle", class: "ct", style: "fill:var(--sheet);stroke:none;font-weight:600" }, g).textContent = label; return; }
+  const t = el("text", { x: X(x) + 8, y: Y(y) - 6, class: "ct", fill: color }, g);
+  t.textContent = id + (label ? " " + label : "");
+});
+
+// ---------- category filters, legend, circuit table ----------
+const CATS = { light: "Φωτισμός", sock: "Ρευματοδότες", power: "Ισχύος & κλιματισμός", pool: "Πισίνα (ΥΠ)", weak: "Ασθενή", wires: "Καλωδιώσεις" };
+const shown = Object.fromEntries(Object.keys(CATS).map(k => [k, true]));
+function applyFilters() {
+  symG.querySelectorAll(".sym").forEach(g => { const k = g.dataset.k; g.style.display = k === "panel" || shown[k] ? "" : "none"; });
+  wiresG.querySelectorAll(".wire").forEach(w => { const k = circ[w.dataset.c][2]; w.style.display = shown.wires && shown[k] ? "" : "none"; });
+}
+const cats = document.getElementById("cats");
+Object.entries(CATS).forEach(([k, n]) => {
+  const b = document.createElement("button"); b.className = "chip"; b.setAttribute("aria-pressed", "true"); b.id = "cat-" + k;
+  b.innerHTML = (CAT[k] ? `<span class="sw" style="background:${CAT[k]}"></span>` : "") + n;
+  b.onclick = () => { shown[k] = !shown[k]; b.setAttribute("aria-pressed", String(shown[k])); applyFilters(); };
+  cats.appendChild(b);
+});
+
+const LEG = [["L", "Φωτιστικό σημείο οροφής", "var(--c-light)"], ["W", "Εξωτερικό φωτιστικό τοίχου (χελώνα)", "var(--c-light)"], ["B", "Φωτιστικό κήπου (κολωνάκι)", "var(--c-light)"],
+  ["SW", "Διακόπτης απλός", "var(--c-light)"], ["SW2", "Διακόπτης αλέ-ρετούρ", "var(--c-light)"], ["S", "Ρευματοδότης σούκο (διπλός)", "var(--c-sock)"],
+  ["P", "Ρευματοδότης / παροχή ισχύος συσκευής", "var(--c-power)"], ["P3", "Τριφασική παροχή (εστίες, αντλία θερμότητας, EV)", "var(--c-power)"], ["AC", "Παροχή κλιματιστικού", "var(--c-power)"],
+  ["SD", "Ανιχνευτής καπνού / θερμότητας", "var(--c-power)"], ["PL", "Φωτιστικό πισίνας SELV 12 V", "var(--c-pool)"], ["D", "Σημείο δεδομένων Cat6 / θυροτηλεόραση", "var(--c-weak)"],
+  ["TV", "Σημείο τηλεόρασης", "var(--c-weak)"], ["AP", "Σημείο πρόσβασης Wi-Fi", "var(--c-weak)"], ["CAM", "Κάμερα CCTV", "var(--c-weak)"], ["PNL", "Πίνακας (ΓΠ, ΥΠ, ΔΕΗ, inverter)", "var(--ink)"]];
+const legend = document.getElementById("legend");
+LEG.forEach(([k, n, c]) => {
+  const s = document.createElementNS(NS, "svg"); s.setAttribute("viewBox", `${X(0) - 17} ${Y(0) - 11} 34 22`);
+  const holder = document.createElement("div"); holder.appendChild(s);
+  symbol(k, 0, 0, c, s);
+  const t = document.createElement("div"); t.textContent = n;
+  legend.append(holder, t);
+});
+
+const tbody = document.querySelector("#tbl tbody"), selNote = document.getElementById("selNote");
+let selected = null;
+function select(id) {
+  selected = selected === id ? null : id;
+  svg.classList.toggle("dim", !!selected);
+  svg.querySelectorAll("[data-c]").forEach(n => n.classList.toggle("hl", n.dataset.c === selected));
+  tbody.querySelectorAll("tr[data-c]").forEach(r => r.classList.toggle("sel", r.dataset.c === selected));
+  if (!selected) { selNote.textContent = "Όλα τα κυκλώματα. Πατήστε μια γραμμή του πίνακα κυκλωμάτων για να απομονώσετε ένα κύκλωμα."; return; }
+  const c = circ[selected], n = (byCirc[selected] || []).length;
+  selNote.innerHTML = `<b>${c[0]}</b> · ${c[3]} · ${c[4]}, ${c[5]} mm², ${c[6]} · ${n} σημεία`;
+}
+let group = "";
+CIRCUITS.forEach(c => {
+  if (c[1] !== group) {
+    group = c[1];
+    const gr = document.createElement("tr"); gr.className = "grp";
+    gr.innerHTML = `<td colspan="7">${group === "ΓΠ" ? "Γενικός Πίνακας (ΓΠ), τεχνικός χώρος" : group === "ΥΠ" ? "Υποπίνακας Πισίνας (ΥΠ), μηχανοστάσιο" : "Ασθενή ρεύματα, από το rack"}</td>`;
+    tbody.appendChild(gr);
+  }
+  const tr = document.createElement("tr"); tr.dataset.c = c[0]; tr.tabIndex = 0;
+  tr.innerHTML = `<td><span class="cid" style="background:${CAT[c[2]]}">${c[0]}</span></td><td>${c[3]}</td><td class="mono">${c[4]}</td><td class="mono">${c[5]}</td><td class="mono">${c[6]}</td><td>${c[7]}</td><td class="mono">${(byCirc[c[0]] || []).length}</td>`;
+  tr.onclick = () => select(c[0]);
+  tr.onkeydown = e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); select(c[0]); } };
+  tbody.appendChild(tr);
+});
+applyFilters();
+</script>

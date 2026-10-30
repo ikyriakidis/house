@@ -62,7 +62,7 @@ button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
 <div class="wrap">
   <header>
-    <h1>Split-Wing House 3D · v5</h1>
+    <h1>Split-Wing House 3D · v6</h1>
     <p class="sub">A 3D model of the concept plan: 209 m², single storey, street on the south, pool in the north garden. Drag to orbit, scroll or pinch to zoom, right-drag to pan. Room sizes match the <a href="plan.html">floor plan</a> and the <a href="electrical.html">electrical drawing</a>. <a href="compare.html">Compare versions</a> · <a href="index.html">Home</a></p>
   </header>
 
@@ -127,8 +127,8 @@ const WINDOWS = [
   [0, 12.8, 0, 14.1, 0.9], [W, 7.0, W, 8.2, 1.4], [W, 9.4, W, 11.6, 1.6], [3.8, D, 8.6, D, 0], [9.4, D, 12.6, D, 0],
   [W, 15.6, W, 18.4, 0.9],
 ];
-const POOL = [2.0, 26.0, 9.0, 4.0];
-const DECK = [1.0, 25.0, 14.0, 6.0];
+const POOL = [2.0, 22.4, 9.0, 4.0];   // pergola-v6: pool right beside the terrace
+const DECK = [1.0, 22.02, 14.0, 5.68];   // starts just short of the pool cut-out so the hole never touches the outline
 
 // ---------- Renderer, scene, camera ----------
 const renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -329,7 +329,18 @@ box(-40, -9.15, 100, 0.15, 0.15, 0, mat.coping, { cast: false });               
 flat(7.2, -8, 5.6, 8, 0.02, mat.paving);                                        // driveway
 flat(4.5, -8, 1.3, 8, 0.02, mat.stone);                                         // front path
 flat(-1.2, 0, 1.2, D, 0.015, mat.gravel);                                       // west side path to the tech-room door
-flat(0, D, W, 3, 0.03, mat.paving);                                             // terrace
+flat(0, D, W, 3, 0.03, mat.paving);
+// bioclimatic pergola 13 × 5 m over the terrace and the first 2 m of the pool: anthracite frame, tilted louvres
+const pergola = new THREE.Group(); scene.add(pergola);
+[0.15, 1.55, 11.45, 12.85].forEach(x => box(x - 0.09, D + 4.8, 0.18, 0.18, 2.9, 0, mat.frame, { group: pergola }));
+box(-0.05, D, 0.18, 5.0, 0.24, 2.9, mat.frame, { group: pergola }); box(W - 0.13, D, 0.18, 5.0, 0.24, 2.9, mat.frame, { group: pergola });
+box(-0.05, D + 4.8, W + 0.1, 0.2, 0.24, 2.9, mat.frame, { group: pergola }); box(-0.05, D, W + 0.1, 0.12, 0.24, 2.9, mat.frame, { group: pergola });
+box(1.55, D + 0.1, 0.12, 4.7, 0.2, 2.92, mat.frame, { group: pergola }); box(11.39, D + 0.1, 0.12, 4.7, 0.2, 2.92, mat.frame, { group: pergola });
+for (let y = D + 0.25; y < D + 4.8; y += 0.22) {
+  const l = new THREE.Mesh(new THREE.BoxGeometry(W - 0.2, 0.025, 0.2), mat.white);
+  l.position.set(W / 2, 3.02, -y); l.rotation.x = 0.5; l.castShadow = true; l.receiveShadow = true; pergola.add(l);
+}
+[3.2, 6.5, 9.8].forEach(x => { const s = new THREE.Mesh(new THREE.BoxGeometry(1.2, 0.03, 0.08), mat.lamp); s.position.set(x, 2.86, -(D + 2.4)); pergola.add(s); });                                             // terrace
 flat(...DECK, 0.03, mat.deck, [[POOL[0] - 0.3, POOL[1] - 0.3, POOL[2] + 0.6, POOL[3] + 0.6]]);
 // sunken pool: coping, tiled basin, water
 const [px, py, pw, pd] = POOL;
@@ -337,7 +348,7 @@ const [px, py, pw, pd] = POOL;
 flat(px - 0.3, py - 0.3, pw + 0.6, pd + 0.6, 0.032, mat.black, [POOL]);
 for (let x = px - 0.25; x < px + pw + 0.3; x += 0.12) { box(x, py - 0.28, 0.035, 0.26, 0.012, 0.032, mat.white, { cast: false }); box(x, py + pd + 0.02, 0.035, 0.26, 0.012, 0.032, mat.white, { cast: false }); }
 for (let y = py; y < py + pd; y += 0.12) { box(px - 0.28, y, 0.26, 0.035, 0.012, 0.032, mat.white, { cast: false }); box(px + pw + 0.02, y, 0.26, 0.035, 0.012, 0.032, mat.white, { cast: false }); }
-box(1.0, 30.85, 0.6, 0.6, 0.04, 0.03, mat.frame, { cast: false });                       // balance-tank access cover
+box(0.6, 26.7, 0.6, 0.6, 0.04, 0.03, mat.frame, { cast: false });                       // balance-tank access cover
 [4.5, 8.5].forEach(x => box(x - 0.12, py + 0.01, 0.24, 0.02, 0.24, -0.55, mat.lamp, { cast: false }));   // underwater lights
 [[0.2, 21.92, 12.6, 0.16], [4.2, -0.42, 2.3, 0.24], [2.0, 31.03, 8.6, 0.14]].forEach(([x, y, w, d]) => {   // slot drains
   box(x, y, w, d, 0.035, 0, mat.black, { cast: false });
@@ -350,6 +361,7 @@ box(px + pw - 0.05, py, 0.05, pd, 1.45, -1.4, mat.poolTile, { cast: false });
 flat(px, py, pw, pd, -1.4, mat.poolTile);
 for (let i = 0; i < 4; i++) box(px + 0.05, py + 0.6 + i * 0.3, 1.0, 0.3, 0.25, -0.25 - i * 0.25 - 0.25, mat.poolTile, { cast: false }); // corner steps
 flat(px, py, pw, pd, 0.025, mat.water);
+box(px + 0.05, py + 0.05, pw - 0.1, 1.45, 1.1, -1.4, mat.poolTile, { cast: false });   // sun shelf, 30 cm of water
 // boundary: front wall with openings for the gate and drive, hedges on the sides and back
 [[-3, 7.5], [5.8, 1.4], [12.8, 3.2]].forEach(([x, w]) => { box(x, -8.25, w, 0.25, 1.1, 0, mat.render); box(x - 0.02, -8.27, w + 0.04, 0.29, 0.06, 1.1, mat.coping); });
 // Bushy hedges, lavender beds and stepping stones (instanced, so hundreds of plants stay cheap)
@@ -371,11 +383,11 @@ function bushes(points, radius, material, flatten = 1) {
   line(-2.65, -7.7, -2.65, 44.6); line(15.65, -7.7, 15.65, 44.6); line(-2.6, 44.65, 15.6, 44.65);
   bushes(hedge, 0.5, mat.hedge);
   const lav = [], leaf = [];
-  for (let x = 0.4; x < W - 0.2; x += 0.5) if (x < 5.9 || x > 7.3) { lav.push([x, D + 3.25, 0.32]); leaf.push([x + 0.2, D + 3.3, 0.18]); }
+  for (let x = 1.2; x < 14.6; x += 0.5) { lav.push([x, 27.95, 0.32]); leaf.push([x + 0.2, 28.0, 0.18]); }
   for (let x = 0.3; x < 3.3; x += 0.5) { lav.push([x, -0.55, 0.32]); leaf.push([x + 0.2, -0.6, 0.18]); }
   for (let x = -2.3; x < 4.3; x += 0.5) { lav.push([x, -7.55, 0.32]); leaf.push([x + 0.2, -7.6, 0.18]); }
   bushes(leaf, 0.24, mat.lavLeaf, 0.6); bushes(lav, 0.15, mat.lavender, 1.4);
-  [22.55, 23.25, 23.95, 24.6].forEach(y => box(6.2, y, 0.9, 0.45, 0.05, 0, mat.stone, { cast: false }));
+
 }
 
 // ---------- Floors ----------
@@ -800,8 +812,8 @@ place(table(2.2, 1.0, mat.darkWood), 10.9, 20.6);
 place(sofa(2.2, 0.9, mat.canvas, mat.linen), 4.6, 21.4, 0); place(sofa(0.9, 0.9, mat.canvas, mat.linen), 2.6, 20.3, 90);
 place(coffeeTable(1.1, 0.6), 4.6, 20.5);
 [[1.2, 19.7], [8.9, 19.7], [12.6, 21.7], [0.4, 21.7]].forEach(([x, y]) => place(plant(1.4, mat.leafOlive), x, y));
-[26.3, 27.6, 28.9].forEach(y => place(lounger(), 13.0, y, -90));
-place(umbrella(), 13.4, 25.6);
+[23.3, 24.6, 25.9].forEach(y => place(lounger(), 13.0, y, -90));
+place(umbrella(), 13.6, 27.2);
 
 // ---------- Pool house: pool WC, BBQ store, covered BBQ kitchen (north end of the garden) ----------
 {
@@ -872,7 +884,7 @@ sysTag("Server rack", 2.3, 12.0, 2.0, 3.4, 0.42);
 sysTag("Heat pump (αντλία θερμότητας)", 13.42, 7.45, 1.45, 3.3);
 sysTag("Hot-water cylinder", CYL[0], CYL[1], 1.8, 4.0, 0.42);
 sysTag("Pool plant room (pump, filter, salt chlorinator)", 1.4, 33.1, 2.8, 4.4);
-sysTag("Balance tank (overflow pool)", 1.3, 31.15, 0.2, 2.2, 0.42);
+sysTag("Balance tank (overflow pool)", 0.9, 27.0, 0.2, 2.2, 0.42);
 sysTag("AC outdoor units", 13.35, 3.8, 0.85, 2.5);
 sysTag("Freezer + fridge", FRIDGE[0], FRIDGE[1], 2.3, 3.4, 0.42);
 sysTag("Solar panels on the roof", 3.4, 2.7, 3.9, 5.4);
@@ -890,7 +902,7 @@ const SERVICES = {
       [[12.0, 7.3], [12.0, 8.0]], [[11.2, 7.3], [11.2, 6.9]],
       [[13.7, 7.3], [13.7, 31.6], [1.6, 31.6], [1.6, 32.4]], [[8.5, 31.6], [8.5, 33.6]], [[3.3, 31.6], [3.3, 33.4]], [[12.4, 31.6], [12.4, 31.75]],
     ],
-    extra: [{ color: "#16a3b8", lines: [[[1.75, 30.25], [1.3, 31.15], [1.3, 32.6]], [[1.9, 32.2], [1.9, 25.45], [11.6, 25.45]], [[3.0, 25.45], [3.0, 26.0]], [[5.0, 25.45], [5.0, 26.0]], [[7.0, 25.45], [7.0, 26.0]], [[9.0, 25.45], [9.0, 26.0]]] }],
+    extra: [{ color: "#16a3b8", lines: [[[1.75, 26.65], [0.9, 27.0], [0.9, 32.6]], [[1.9, 32.2], [1.6, 28.6], [1.6, 22.25], [11.6, 22.25]], [[3.0, 22.25], [3.0, 22.4]], [[5.0, 22.25], [5.0, 22.4]], [[7.0, 22.25], [7.0, 22.4]], [[9.0, 22.25], [9.0, 22.4]]] }],
     hot: [
       [[9.8, 6.95], [9.95, 7.42], [12.48, 7.42], [12.48, 10.88], [11.3, 10.88]], [[12.48, 9.38], [12.1, 9.38]],
       [[9.93, 7.42], [9.93, 8.78], [9.1, 10.68], [8.55, 10.68]],
@@ -899,7 +911,7 @@ const SERVICES = {
     ],
     points: [
       [11.6, -4.4, "meter", "water meter"], [12.85, 7.3, "valve", "valve · filter · manifold"], [9.8, 6.95, "valve", "cylinder"],
-      [13.7, -0.3, "tap", "tap"], [1.3, 31.15, "chamber", "balance tank"], [3.0, 26.0, "tap", ""], [5.0, 26.0, "tap", ""], [7.0, 26.0, "tap", ""], [9.0, 26.0, "tap", ""], [13.2, 20.6, "tap", "tap"], [12.4, 31.75, "tap", "outdoor shower"], [1.6, 32.4, "valve", "pool top-up"],
+      [13.7, -0.3, "tap", "tap"], [0.9, 27.0, "chamber", "balance tank"], [3.0, 22.4, "tap", ""], [5.0, 22.4, "tap", ""], [7.0, 22.4, "tap", ""], [9.0, 22.4, "tap", ""], [13.2, 20.6, "tap", "tap"], [12.4, 31.75, "tap", "outdoor shower"], [1.6, 32.4, "valve", "pool top-up"],
     ] },
   drainage: { label: "Drainage", color: "#8a6440", storm: "#2a9d8f", note: "<b>Drainage:</b> brown is foul water. Every bathroom, the kitchen and the laundry drain east to a line of <b>inspection chambers (IC)</b> along the east side yard, falling about 1–2% to the <b>municipal sewer</b> at the street; the pool house joins at the top. Teal is rainwater: roof downpipes feed a <b>rainwater tank</b> under the lawn for the garden, with an overflow soakaway. <b>Flood protection:</b> the garage floor sits 15 cm above the driveway, a full-width <b>slot drain</b> in front of the door and a second one at the gate catch run-off and send it to a <b>soakaway</b>, the driveway falls toward the street, and the door reveals have slots for a removable flood barrier. <b>Drainage channels:</b> a perforated <b>perimeter drain</b> runs around the foundations 0.5 m out from the walls, and slot drains sit along the terrace edge, at the front door and in front of the pool house; all feed the rainwater tank or a soakaway. The pool's overflow water goes to its own balance tank, not to these drains.",
     lines: [
@@ -909,19 +921,19 @@ const SERVICES = {
       [[6.25, 4.35], [14.3, 4.35]], [[5.55, 5.5], [6.6, 5.5], [6.6, 4.35]],
     ],
     stormLines: [
-      [[0.1, 19.0], [0.1, 23.6], [0.2, 23.6]], [[12.9, 19.0], [12.9, 22.6], [2.2, 22.6], [2.2, 23.0]], [[0.1, 0.1], [-0.7, 0.1], [-0.7, 23.6], [0.2, 23.6]],
-      [[0.2, 23.6], [-1.6, 23.6]],
-      [[-0.5, -0.5], [13.5, -0.5], [13.5, 19.6], [-0.5, 19.6], [-0.5, -0.5]], [[-0.5, 19.6], [-0.7, 23.6]],
-      [[0.2, 22.0], [12.8, 22.0]], [[6.6, 22.0], [6.6, 22.6]], [[4.2, -0.3], [6.5, -0.3]],
+      [[0.1, 19.0], [-0.7, 19.0]], [[12.9, 19.0], [13.6, 19.0], [13.6, 21.2]], [[0.1, 0.1], [-0.7, 0.1], [-0.7, 21.2], [13.6, 21.2]], [[12.7, 21.2], [12.7, 23.0]],
+      [[13.6, 23.7], [14.9, 23.7]],
+      [[-0.5, -0.5], [13.5, -0.5], [13.5, 19.6], [-0.5, 19.6], [-0.5, -0.5]], [[13.5, 19.6], [13.6, 21.2]],
+      [[0.2, 22.0], [12.8, 22.0]], [[12.8, 22.0], [13.6, 22.0]], [[4.2, -0.3], [6.5, -0.3]],
       [[2.0, 31.1], [10.6, 31.1]], [[2.0, 31.1], [-1.6, 31.1]],
       [[12.9, 0.1], [14.0, -0.3]], [[6.5, -0.3], [14.0, -0.3], [14.4, -2.8]], [[6.6, -4.25], [14.4, -4.25], [14.4, -2.8]],
     ],
     points: [
       [14.3, 34.6, "chamber", "IC"], [14.3, 20.0, "chamber", "IC"], [14.3, 11.0, "chamber", "IC"], [14.3, 8.0, "chamber", "IC"], [14.3, 4.35, "chamber", "IC"],
-      [14.3, -4.4, "meter", "→ sewer"], [14.4, -2.8, "chamber", "soakaway"], [-1.6, 23.6, "chamber", "overflow"], [-1.6, 31.1, "chamber", "soakaway"],
+      [14.3, -4.4, "meter", "→ sewer"], [14.4, -2.8, "chamber", "soakaway"], [14.9, 23.7, "chamber", "overflow"], [-1.6, 31.1, "chamber", "soakaway"],
       [0.1, 0.1, "tap", ""], [12.9, 0.1, "tap", ""], [0.1, 19.0, "tap", ""], [12.9, 19.0, "tap", ""],
     ],
-    tank: [0.2, 23.0, 2.0, 1.3] },
+    tank: [11.8, 23.0, 1.8, 1.4] },
   electrical: { label: "Electrical", color: "#c98a00", note: "<b>Electrical:</b> the <b>ΔΕΗ meter</b> at the front boundary feeds, underground along the west side path, the <b>main panel</b> in the tech room next to the <b>inverter and batteries</b>; DC cable comes down from the roof panels. A trunk runs along the entry-hall ceiling with circuits to every room, plus dedicated lines to the <b>EV charger</b> in the garage, the <b>heat pump</b> and <b>AC outdoor units</b>, and a buried feed to a <b>sub-panel</b> in the pool house (pool pump, BBQ, lights). The ovals are the outdoor wall lights (<b>χελώνες</b>) at the doors, garage, side paths, terrace and pool house.",
     lines: [
       [[0.5, -4.4], [-0.6, -4.4], [-0.6, 10.4], [2.6, 10.4]],
@@ -930,11 +942,11 @@ const SERVICES = {
       [[3.95, 10.5], [7.9, 10.5]], [[3.95, 13.0], [6.2, 16.5]], [[3.95, 13.0], [1.7, 16.8]],
       [[7.9, 10.5], [10.0, 13.6], [11.0, 17.2]], [[7.9, 10.5], [12.0, 10.5]], [[7.9, 10.5], [10.05, 8.7], [11.2, 7.6]],
       [[5.0, 1.6], [6.5, 1.4], [12.8, 1.4], [12.85, 3.0]], [[12.85, 3.0], [13.35, 3.8]], [[11.2, 7.6], [13.42, 7.45]],
-      [[-0.6, 10.4], [-0.6, 31.4], [1.4, 31.4], [1.4, 32.4]], [[1.4, 31.4], [4.5, 31.4], [4.5, 26.1], [8.5, 26.1]],
+      [[-0.6, 10.4], [-0.6, 31.4], [1.4, 31.4], [1.4, 32.4]], [[1.4, 31.4], [1.4, 28.6], [4.5, 22.5], [8.5, 22.5]], [[12.9, 19.0], [12.9, 21.5]],
     ],
     dashed: [[[6.5, 2.5], [1.7, 9.0], [1.2, 10.12]]],
     points: [
-      [0.5, -4.4, "meter", "ΔΕΗ meter"], [2.6, 10.25, "panel", "main panel"], [12.85, 3.0, "panel", "EV charger"], [1.4, 32.4, "panel", "pool sub-panel"], [4.5, 26.1, "light", ""], [8.5, 26.1, "light", ""],
+      [0.5, -4.4, "meter", "ΔΕΗ meter"], [2.6, 10.25, "panel", "main panel"], [12.85, 3.0, "panel", "EV charger"], [1.4, 32.4, "panel", "pool sub-panel"], [4.5, 22.5, "light", ""], [8.5, 22.5, "light", ""], [12.9, 21.5, "panel", "pergola motor"],
       [5.0, 1.6, "dot", ""], [1.7, 2.0, "dot", ""], [1.7, 6.0, "dot", ""], [5.5, 4.0, "dot", ""], [5.5, 7.3, "dot", ""], [7.9, 10.5, "dot", ""], [6.2, 16.5, "dot", ""],
       [1.7, 16.8, "dot", ""], [11.0, 17.2, "dot", ""], [12.0, 10.5, "dot", ""], [11.2, 7.6, "dot", ""],
       [4.35, -0.12, "light", ""], [5.95, -0.12, "light", ""], [6.8, -0.12, "light", ""], [12.75, -0.12, "light", ""], [-0.12, 6.0, "light", ""], [-0.12, 11.2, "light", ""],
@@ -1166,7 +1178,7 @@ const houseLights = [[6.2, 17], [8, 10.6], [1.7, 13.4], [1.7, 16.8], [11, 17.2],
   const l = new THREE.PointLight(0xffd6a0, 0, 6.5, 2); l.position.set(x, 2.55, -y); scene.add(l); return l;
 });
 const poolLight = new THREE.PointLight(0x5fe0ff, 0, 9, 2); poolLight.position.set(px + pw / 2, -0.7, -(py + pd / 2)); scene.add(poolLight);
-[[0.4, 22.3], [3.6, 22.3], [9.4, 22.3], [12.6, 22.3], [1.2, 30.6], [11.8, 30.6]].forEach(([x, y]) => {
+[[0.4, 27.7], [14.6, 27.7], [14.2, 22.4], [1.2, 30.6], [11.8, 30.6]].forEach(([x, y]) => {
   const b = new THREE.Group(); cy(b, 0, 0.3, 0, 0.06, 0.07, 0.6, mat.frame, 10); cy(b, 0, 0.64, 0, 0.07, 0.07, 0.08, mat.lamp, 10); place(b, x, y, 0, scene);
 });
 function setDusk(on) {
@@ -1185,7 +1197,7 @@ function setDusk(on) {
 // ---------- Controls: views, roof, sun, toggles ----------
 const VIEWS = {
   aerial: { label: "Aerial", pos: [27, 22, 12], target: [6.5, 0, -13], note: "<b>Aerial:</b> the 13 m-wide house between the side hedges, garage and kids' rooms on the street side, pool and garden behind." },
-  garden: { label: "From the pool", pos: [12.6, 1.7, -30.5], target: [6.0, 1.7, -17.5], note: "<b>From the pool:</b> the north façade with full-height glass to the living room and master bedroom, and the terrace pergola. The office window is on the right." },
+  garden: { label: "From the pool", pos: [12.6, 1.7, -30.5], target: [6.0, 1.7, -17.5], note: "<b>From the pool:</b> the north façade with full-height glass to the living room and master bedroom, the bioclimatic pergola over the terrace and the pool's sun shelf. The office window is on the right." },
   street: { label: "From the street", pos: [2.5, 1.7, 13], target: [7.5, 1.8, 0], note: "<b>From the street:</b> the low front wall, the garage with both cars, and the front door under its canopy." },
   foyer: { label: "Foyer", pos: [3.8, 1.6, -0.5], target: [6.5, 1.2, -1.6], note: "<b>Foyer:</b> the shared entrance. The front door is behind you, the door from the garage is ahead on the right, and the coat and shoe cupboard is on the left. Both ways in arrive here. Shopping has its own door from the garage straight into the pantry." },
   unload: { label: "Garage → pantry", pos: [9.3, 1.6, -8.1], target: [6.5, 1.05, -7.1], note: "<b>Garage → pantry:</b> standing in the storage bay at the back of the garage. The door ahead opens straight into the pantry, with a landing shelf beside it for the bags. The door to the foyer, for people, is at the front of the garage." },
@@ -1201,7 +1213,7 @@ const ROOFS = {
 };
 const SUNS = {
   jun: { label: "21 Jun noon", alt: 74.9, az: 180, note: "Summer noon: the house's shadow ends 1.3 m into the terrace." },
-  equ: { label: "Mar/Sep noon", alt: 51.5, az: 180, note: "Equinox noon: the shadow stops well short of the pool." },
+  equ: { label: "Mar/Sep noon", alt: 51.5, az: 180, note: "Equinox noon: the shadow just reaches the pool's south edge, which sits under the pergola anyway." },
   dec: { label: "21 Dec noon", alt: 28.1, az: 180, note: "Winter noon: the low sun throws an 8.5 m shadow across the pool." },
   eve: { label: "Summer 7 pm", alt: 15, az: 292, note: "Summer evening: the sun sets north of west and reaches the pool over the side hedge." },
   dusk: { label: "Dusk, lights on", alt: 3, az: 296, note: "Dusk: house lights on, windows glowing, pool lit from below." },
