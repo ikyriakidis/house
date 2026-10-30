@@ -3,7 +3,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
-<title>Split-Wing House Plan v1</title>
+<title>Split-Wing House Plan</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=Instrument+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
@@ -129,6 +129,10 @@ table.sched tr.sub td { color: var(--ink-soft); cursor: default; border-bottom: 
 .drive { fill: none; stroke: var(--ink-soft); stroke-dasharray: 2 4; stroke-width: 1; }
 .skylight { fill: none; stroke: var(--glass); stroke-width: 1; stroke-dasharray: 3 2; }
 .shadow-line { stroke: var(--shadow); stroke-width: 1.2; stroke-dasharray: 5 4; }
+/* viewer-patch-1 */
+.dimg line { stroke: var(--accent); stroke-width: 1; }
+.dimg text { font-family: var(--f-mono); font-size: 9.5px; fill: var(--accent); paint-order: stroke; stroke: var(--sheet); stroke-width: 3px; stroke-linejoin: round; }
+.dimg .rd { font-size: 9px; }
 .shadow-lab { font-family: var(--f-mono); font-size: 9.5px; fill: var(--shadow); }
 </style>
 
@@ -156,6 +160,8 @@ table.sched tr.sub td { color: var(--ink-soft); cursor: default; border-bottom: 
         <div class="chips" id="zoneChips"></div>
         <span class="lab">Routes</span>
         <div class="chips" id="routeChips"></div>
+        <span class="lab">Show</span>
+        <div class="chips" id="showChips"></div>
       </div>
       <div class="plan-box"><svg id="plan" viewBox="0 0 660 1244" role="img" aria-label="Single-storey floor plan, north up, street at the bottom, pool in the north garden"></svg></div>
       <div class="route-note" id="routeNote">Pick a route to trace how a person moves through the house.</div>
@@ -459,6 +465,55 @@ const sb = el("g", { transform: `translate(${X(-3)}, ${Y(-6.9)})` });
 for (let i = 0; i < 5; i++) el("rect", { x: i * S, y: 0, width: S, height: 6, fill: i % 2 ? "var(--sheet)" : "var(--ink)", stroke: "var(--ink)", "stroke-width": 1 }, sb);
 txt(0, 20, "0", "rarea", {}, sb);
 txt(5 * S, 20, "5 m", "rarea", { "text-anchor": "middle" }, sb);
+
+// ---------- Dimensions: room sizes and dimension chains along every façade (toggle) ----------
+const dimG = el("g", { class: "dimg" }); dimG.style.display = "none";
+const f2 = n => n.toFixed(2);
+function dimChain(horizontal, at, pts) {
+  pts = [...new Set(pts.map(p => +p.toFixed(3)))].sort((a, b) => a - b);
+  if (pts.length < 2) return;
+  const P = (p, o = 0) => horizontal ? [X(p), Y(at) + o] : [X(at) + o, Y(p)];
+  const [ax, ay] = P(pts[0]), [bx, by] = P(pts[pts.length - 1]);
+  el("line", { x1: ax, y1: ay, x2: bx, y2: by }, dimG);
+  pts.forEach(p => { const [x, y] = P(p); el("line", { x1: x - 4, y1: y + 4, x2: x + 4, y2: y - 4 }, dimG); });
+  for (let i = 1; i < pts.length; i++) {
+    const m = (pts[i - 1] + pts[i]) / 2, [x, y] = P(m), len = pts[i] - pts[i - 1];
+    if (len < 0.3) continue;
+    const t = txt(horizontal ? x : x - 4, horizontal ? y - 4 : y, f2(len), "", { "text-anchor": "middle" }, dimG);
+    if (!horizontal) t.setAttribute("transform", "rotate(-90 " + (x - 4) + " " + y + ")");
+  }
+}
+{
+  const near = (a, b) => Math.abs(a - b) < 1e-6;
+  const inside = ROOMS.filter(r => !r.out).flatMap(r => rectsOf(r));
+  const edge = (test, a, b) => inside.filter(test).flatMap(r => [a(r), b(r)]);
+  dimChain(true, -1.1, [0, W, ...edge(r => near(r[1], 0), r => r[0], r => r[0] + r[2])]);
+  dimChain(true, D + 0.55, [0, W, ...edge(r => near(r[1] + r[3], D), r => r[0], r => r[0] + r[2])]);
+  dimChain(false, -1.1, [0, D, ...edge(r => near(r[0], 0), r => r[1], r => r[1] + r[3])]);
+  dimChain(false, W + 1.1, [0, D, ...edge(r => near(r[0] + r[2], W), r => r[1], r => r[1] + r[3])]);
+  dimChain(true, D + 4.3, [-3, 0]); dimChain(true, D + 4.3, [W, W + 3]);
+  dimChain(false, POOL[0] + POOL[2] + 0.5, [D, POOL[1], POOL[1] + POOL[3]]);
+  ROOMS.forEach(rm => {
+    if (rm.label === false) return;
+    const [x, y, w, h] = rectsOf(rm)[0];
+    const words = rm.name.split(" ");
+    const lines = (w < 3 && words.length > 1) ? Math.min(2, words.length) : 1;
+    const label = w < 2.5 ? w.toFixed(1) + "×" + h.toFixed(1) : f2(w) + " × " + f2(h);
+    txt(X(x + w / 2), Y(y + h / 2) + (lines - 1) * 7 + 22, label, "rd", { "text-anchor": "middle" }, dimG);
+  });
+}
+const ctxLabels = [...svg.querySelectorAll("text.anno")].filter(t => /setback|^West$|^East$/.test(t.textContent));
+{
+  const b = document.createElement("button");
+  b.className = "chip"; b.id = "show-dims"; b.textContent = "Dimensions"; b.setAttribute("aria-pressed", "false");
+  b.onclick = () => {
+    const on = dimG.style.display === "none";
+    dimG.style.display = on ? "" : "none";
+    ctxLabels.forEach(t => { t.style.display = on ? "none" : ""; });
+    b.setAttribute("aria-pressed", String(on));
+  };
+  document.getElementById("showChips").appendChild(b);
+}
 
 const routeG = el("g", { id: "routes" });
 
