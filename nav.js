@@ -15,11 +15,10 @@
       id: "plot1",
       label: "Plot 1",
       note: "19 × 53 m, street south",
-      rootIsLatest: true, // the root plan.html / 3d.html / electrical.html are copies of this plot's latest version
+      rootVersion: "v7", // the root plan.html / 3d.html / electrical.html are copies of this version
       compare: "compare.html",
       versions: [
-        // Plot 1 v8 does not exist yet. Add it here (folder v8/), e.g.
-        // { id: "v8", path: "v8", title: "Short title", views: ["plan", "3d"] },
+        { id: "v8", path: "v8", title: "Plot 2 v5 house, 13 m wide, garage to the street", views: ["plan", "3d"] },
         { id: "v7", path: "v7", title: "Χελώνα, composite structure", views: ["plan", "3d", "electrical"] },
         { id: "v6", path: "v6", title: "Pool by the terrace, pergola", views: ["plan", "3d", "electrical"] },
         { id: "v5", path: "v5", title: "Overflow pool, electrical", views: ["plan", "3d", "electrical"] },
@@ -68,7 +67,7 @@
   var plot = null, version = null;
   PLOTS.forEach(function (p) {
     p.versions.forEach(function (v) { if (v.path.replace(/\/+$/, "") === folder) { plot = p; version = v; } });
-    if (folder === "" && p.rootIsLatest && !plot) { plot = p; version = p.versions[0]; }
+    if (folder === "" && p.rootVersion && !plot) p.versions.forEach(function (v) { if (v.id === p.rootVersion) { plot = p; version = v; } });
   });
   if (!plot) return;
 

@@ -1,6 +1,17 @@
 // One entry per design version, newest first. Each version lives in its own folder (v1/, v2/, ...)
-// and the root plan.html / 3d.html always hold the newest one.
+// The root plan.html / 3d.html / electrical.html hold v7, the last version with an electrical drawing.
 window.HOUSE_VERSIONS = [
+  {
+    id: "v8",
+    date: "2026-11-01",
+    title: "The Plot 2 v5 house on Plot 1",
+    changes: [
+      "The Plot 2 v5 layout (compact foyer, playroom, two bedrooms and the master suite, living room facing the pool) placed on this plot, narrowed from 15.3 to 13 m to fit between the 3 m side setbacks.",
+      "The garage opens south onto the street, with an 8 m driveway beside the front path; the tech room becomes a tech wall in the 7 m garage.",
+      "Living room 7 m wide, dining 3.3 m and kitchen 3.7 m behind it; pool 3 × 8 m in a courtyard that runs to a 2.2 m wall on the east boundary.",
+      "Heated area about 182 m². No electrical drawing yet."
+    ]
+  },
   {
     id: "v7",
     date: "2026-10-30",
