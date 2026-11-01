@@ -2,9 +2,23 @@
 // The root plan.html / 3d.html / electrical.html hold v7, the last version with an electrical drawing.
 window.HOUSE_VERSIONS = [
   {
+    id: "v9",
+    date: "2026-11-01",
+    title: "Open kitchen and living, children's rooms together",
+    hasCost: true,
+    changes: [
+      "No pantry: the laundry is the way in from the garage, and the pantry's corner becomes a store at the back of the garage.",
+      "Smaller foyer (2.6 × 2.4 m); the guest WC moves up next to it.",
+      "Both children's bedrooms side by side on the west, next to their shower room; the playroom moves to the courtyard side with a sliding door into the living room.",
+      "Kitchen, dining and living as one open room; fireplace and TV side by side on the east wall, an L-shaped sofa facing them with the pool on the left.",
+      "Same outline as v8. Heated area about 179 m²."
+    ]
+  },
+  {
     id: "v8",
     date: "2026-11-01",
     title: "The Plot 2 v5 house on Plot 1",
+    hasCost: true,
     changes: [
       "The Plot 2 v5 layout (compact foyer, playroom, two bedrooms and the master suite, living room facing the pool) placed on this plot, narrowed from 15.3 to 13 m to fit between the 3 m side setbacks.",
       "The garage opens south onto the street, with an 8 m driveway beside the front path; the tech room becomes a tech wall in the 7 m garage.",

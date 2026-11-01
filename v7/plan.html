@@ -108,7 +108,7 @@ table.sched tr.sub td { color: var(--ink-soft); cursor: default; border-bottom: 
 /* svg */
 .room rect { stroke: var(--ink-soft); stroke-width: 0.8; cursor: pointer; transition: opacity .15s; }
 .room.open rect { stroke-dasharray: 3 3; }
-.room:hover rect, .room.sel rect { stroke: var(--accent); stroke-width: 2; }
+.room:hover rect, .room.sel rect { fill: color-mix(in srgb, var(--accent) 16%, var(--sheet)); }
 .room text { pointer-events: none; }
 .rname { font-family: var(--f-display); font-stretch: 78%; font-weight: 650; font-size: 12.5px; fill: var(--ink); text-transform: uppercase; letter-spacing: .04em; }
 .rarea { font-family: var(--f-mono); font-size: 10px; fill: var(--ink-soft); }
