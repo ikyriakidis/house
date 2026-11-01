@@ -6,7 +6,7 @@
 // at the top of that plot's "versions" array:
 //   { id: "v8", path: "v8", title: "Short title", views: ["plan", "3d"] },
 // "path" is the folder relative to the site root; "views" are the pages in it
-// (plan -> plan.html, 3d -> 3d.html, electrical -> electrical.html).
+// (plan -> plan.html, 3d -> 3d.html, electrical -> electrical.html, cost -> cost.html).
 (function () {
   "use strict";
 
@@ -18,7 +18,7 @@
       rootVersion: "v7", // the root plan.html / 3d.html / electrical.html are copies of this version
       compare: "compare.html",
       versions: [
-        { id: "v8", path: "v8", title: "Plot 2 v5 house, 13 m wide, garage to the street", views: ["plan", "3d"] },
+        { id: "v8", path: "v8", title: "Plot 2 v5 house, 13 m wide, garage to the street", views: ["plan", "3d", "cost"] },
         { id: "v7", path: "v7", title: "Χελώνα, composite structure", views: ["plan", "3d", "electrical"] },
         { id: "v6", path: "v6", title: "Pool by the terrace, pergola", views: ["plan", "3d", "electrical"] },
         { id: "v5", path: "v5", title: "Overflow pool, electrical", views: ["plan", "3d", "electrical"] },
@@ -42,8 +42,8 @@
     }
   ];
 
-  var VIEW_LABELS = { plan: "Plan", "3d": "3D", electrical: "Electrical" };
-  var VIEW_ORDER = ["plan", "3d", "electrical"];
+  var VIEW_LABELS = { plan: "Plan", "3d": "3D", electrical: "Electrical", cost: "Cost" };
+  var VIEW_ORDER = ["plan", "3d", "electrical", "cost"];
 
   window.HOUSE_NAV = { plots: PLOTS, viewLabels: VIEW_LABELS };
 
