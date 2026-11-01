@@ -915,3 +915,4 @@ const clock = new THREE.Clock();
 renderer.setAnimationLoop(() => { const dt = Math.min(clock.getDelta(), 0.1); rippleTex.offset.x += dt * 0.025; rippleTex.offset.y += dt * 0.017; controls.update(); renderer.render(scene, camera); });
 })();
 </script>
+<script src="../../nav.js"></script>
