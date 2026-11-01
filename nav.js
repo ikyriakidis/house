@@ -18,6 +18,7 @@
       rootVersion: "v7", // the root plan.html / 3d.html / electrical.html are copies of this version
       compare: "compare.html",
       versions: [
+        { id: "v10", path: "v10", title: "Gas fireplace and hob on LPG cylinders", views: ["plan", "3d", "cost"] },
         { id: "v9", path: "v9", title: "Open kitchen and living, children's rooms together", views: ["plan", "3d", "cost"] },
         { id: "v8", path: "v8", title: "Plot 2 v5 house, 13 m wide, garage to the street", views: ["plan", "3d", "cost"] },
         { id: "v7", path: "v7", title: "Χελώνα, composite structure", views: ["plan", "3d", "electrical"] },

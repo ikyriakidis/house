@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="el">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Split-Wing House Κόστος</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=Instrument+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: cost sheet — key totals, the EFKA stamps worked out from the official tables, then the itemised budget */
+:root {
+  --paper: #f2f4f1; --sheet: #fbfcfa; --ink: #1e292c; --ink-soft: #5b676a; --rule: #c9d0cc; --accent: #b5532f; --good: #3d7a52;
+  --f-display: "Archivo", "Arial Narrow", system-ui, sans-serif;
+  --f-body: "Instrument Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --paper: #151b1d; --sheet: #1b2326; --ink: #e3e9e6; --ink-soft: #9aa7a8; --rule: #34403f; --accent: #e58a63; --good: #7cc495; color-scheme: dark; }
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; background: var(--paper); color: var(--ink); font: 15px/1.55 var(--f-body);
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 24px 56px;
+}
+main { max-width: 900px; margin: 0 auto; display: grid; gap: 28px; }
+h1 { font-family: var(--f-display); font-stretch: 72%; font-weight: 750; font-size: clamp(32px, 6vw, 52px); line-height: .95; margin: 0; }
+h2 { font-family: var(--f-display); font-stretch: 75%; font-weight: 700; font-size: 26px; margin: 0 0 10px; }
+.lede, .note { color: var(--ink-soft); margin: 8px 0 0; max-width: 70ch; }
+.note { font-size: 13px; }
+.links { font-size: 14px; } .links a { color: var(--accent); }
+.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; }
+.kpi { background: var(--sheet); border: 1px solid var(--rule); border-radius: 4px; padding: 14px 16px; }
+.kpi span { display: block; font-family: var(--f-display); font-stretch: 80%; text-transform: uppercase; letter-spacing: .08em; font-size: 11px; color: var(--ink-soft); }
+.kpi b { font-family: var(--f-mono); font-weight: 500; font-size: 22px; font-variant-numeric: tabular-nums; }
+.seg { display: inline-flex; border: 1px solid var(--rule); border-radius: 999px; overflow: hidden; margin: 0 0 12px; }
+.seg button { font: 600 14px var(--f-body); color: var(--ink); background: var(--sheet); border: 0; padding: 7px 16px; cursor: pointer; }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--sheet); }
+.seg button:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+.wrap { overflow-x: auto; background: var(--sheet); border: 1px solid var(--rule); border-radius: 4px; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th, td { padding: 7px 12px; border-bottom: 1px solid var(--rule); text-align: left; vertical-align: top; }
+th { font-family: var(--f-display); font-stretch: 80%; text-transform: uppercase; letter-spacing: .06em; font-size: 11px; color: var(--ink-soft); font-weight: 600; }
+td.n, th.n { text-align: right; font-family: var(--f-mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+tr.sub td { font-weight: 600; background: color-mix(in srgb, var(--rule) 25%, transparent); }
+tr.tot td { font-weight: 700; border-bottom: 0; }
+td small { color: var(--ink-soft); display: block; }
+.save { color: var(--good); font-weight: 600; }
+label.inp { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; margin-left: 12px; }
+label.inp input { width: 70px; font: 14px var(--f-mono); padding: 4px 6px; border: 1px solid var(--rule); border-radius: 3px; background: var(--sheet); color: var(--ink); }
+</style>
+
+<main>
+  <header>
+    <h1>Κόστος κατασκευής · v10</h1>
+    <p class="lede">Εκτίμηση για το σπίτι του Οικοπέδου 1 v10 (≈179 m² θερμαινόμενα, γκαράζ 48,1 m², πισίνα 3 × 8 m) με <b>σύμμικτη κατασκευή</b>: μεταλλικά υποστυλώματα και δοκοί πάνω σε πέδιλα από οπλισμένο σκυρόδεμα, σύμμικτη πλάκα οροφής με τραπεζοειδές χαλυβδόφυλλο. Τιμές 2026 με ΦΠΑ, χωρίς το οικόπεδο.</p>
+    <p class="links"><a href="plan.html">Κάτοψη</a> · <a href="3d.html">3D</a> · <a href="../index.html#plot1">Αρχική</a></p>
+  </header>
+
+  <section class="kpis" aria-label="Σύνολα">
+    <div class="kpi"><span>Σύνολο έργου</span><b id="k-total">—</b></div>
+    <div class="kpi"><span>Σπίτι + γκαράζ ανά m² θερμ.</span><b id="k-m2">—</b></div>
+    <div class="kpi"><span>Ένσημα ΕΦΚΑ</span><b id="k-efka">—</b></div>
+    <div class="kpi"><span>Ημερομίσθια (ελάχιστα)</span><b id="k-days">—</b></div>
+  </section>
+
+  <section aria-labelledby="h-efka">
+    <h2 id="h-efka">Ένσημα (ΑΜΚ ΕΦΚΑ)</h2>
+    <div class="seg" role="group" aria-label="Τρόπος κατασκευής">
+      <button type="button" data-t="t2" aria-pressed="true">Σύμμικτη · Πίνακας 2</button>
+      <button type="button" data-t="t1" aria-pressed="false">Συμβατική ΟΣ · Πίνακας 1Α</button>
+    </div>
+    <label class="inp">€ ανά ένσημο <input id="rate" type="number" min="20" max="80" step="1" value="41"></label>
+    <div class="wrap"><table>
+      <thead><tr><th>Χώρος</th><th class="n">m²</th><th class="n">Συντ. Π.1Α</th><th class="n">Συντ. Π.2</th><th class="n">Ημερομίσθια</th></tr></thead>
+      <tbody id="efka"></tbody>
+    </table></div>
+    <p class="note">Συντελεστές ημερομισθίων ανά m² για «Κατοικίες γενικώς» από τους πίνακες της εγκυκλίου ΙΚΑ 13/99 (Πίνακας 1Α για φέροντα οργανισμό από οπλισμένο σκυρόδεμα, Πίνακας 2 όταν η φέρουσα κατασκευή γίνεται από εστεγασμένα επαγγέλματα, δηλ. μεταλλικός σκελετός από συνεργείο). Κάτω από 3.000 ημερομίσθια ο μειωτικός συντελεστής είναι 1,00. Η ακάλυπτη επιφάνεια μετράει όσο η κάλυψη. Οι τοίχοι περίφραξης και οι πλακοστρώσεις μπαίνουν επιπλέον με τον Πίνακα 3. Το κόστος ανά ένσημο είναι οι εισφορές ΕΦΚΑ + ΤΕΚΑ (74,247%) πάνω σε μέσο ημερομίσθιο ≈55 € (ΣΣΕ οικοδόμων 2025, τεχνίτες και βοηθοί με τριετίες). <b>Για τον Πίνακα 2 πρέπει και τα υποστυλώματα να είναι μεταλλικά</b>· με υποστυλώματα από σκυρόδεμα ο μηχανικός θα το κατατάξει στον Πίνακα 1Α.</p>
+  </section>
+
+  <section aria-labelledby="h-bud">
+    <h2 id="h-bud">Αναλυτικός προϋπολογισμός</h2>
+    <div class="wrap"><table>
+      <thead><tr><th>Εργασία</th><th class="n">€</th></tr></thead>
+      <tbody id="bud"></tbody>
+    </table></div>
+    <p class="note">Ενδεικτικές τιμές αγοράς για μεσαίες-καλές προδιαγραφές εκτός Αττικής. Οι προσφορές εργολάβων μπορεί να αποκλίνουν ±15%. Δεν περιλαμβάνονται έπιπλα, φωτιστικά διακόσμησης, οικόπεδο και τόκοι δανείου.</p>
+  </section>
+
+  <p class="note">Εκτίμηση για συζήτηση, όχι προϋπολογισμός μελέτης. Τα ένσημα και οι αμοιβές να επιβεβαιωθούν από τον μηχανικό του έργου.</p>
+</main>
+<script>
+// Areas from the v10 plan (same as v9): heated rooms plus the pool house (counted with main areas), garage, entrance canopy, pool, uncovered = coverage
+const SPACES = [
+  { name: "Κύριοι χώροι σπιτιού", note: "θερμαινόμενα δωμάτια, χολ, WC", a: 179.1, t1: 1.35, t2: 0.54 },
+  { name: "Pool house", note: "μηχανοστάσιο, WC, αποθήκη (ισόγειοι βοηθητικοί)", a: 12.0, t1: 1.35, t2: 0.54 },
+  { name: "Γκαράζ", note: "στεγασμένος ισόγειος χώρος στάθμευσης και αποθήκη", a: 48.1, t1: 0.59, t2: 0.15 },
+  { name: "Στέγαστρο εισόδου", note: "ημιυπαίθριος", a: 2.9, t1: 1.03, t2: 0.39 },
+  { name: "Πισίνα 3 × 8", note: "ασκεπής", a: 24.0, t1: 0.89, t2: 0.45 },
+  { name: "Ακάλυπτος", note: "όσο η κάλυψη", a: 242.1, t1: 0.06, t2: 0.06 }
+];
+const EXTRA_DAYS = 25; // Πίνακας 3: τοίχος αυλής, τοιχεία περίφραξης, πλακοστρώσεις, ράμπα
+
+const BUDGET = [
+  ["Σκελετός και κέλυφος", [
+    ["Εκσκαφές, πέδιλα και πεδιλοδοκοί ΟΣ, πλάκα δαπέδου με μόνωση", "σπίτι + γκαράζ, ≈228 m²", 25000],
+    ["Μεταλλικός σκελετός", "HEB υποστυλώματα, IPE δοκοί, ≈8 t, βαφή, πέργκολα και φεγγίτες", 30000],
+    ["Σύμμικτη πλάκα οροφής", "χαλυβδόφυλλο + 12 cm σκυρόδεμα, ≈240 m²", 15600],
+    ["Δώμα", "θερμομόνωση 12 cm, στεγάνωση, προστασία, στηθαία", 16800],
+    ["Εξωτερικοί τοίχοι", "Ytong 25 cm + ETICS 10 cm, ≈300 m² καθαρά", 36000],
+    ["Εσωτερικά χωρίσματα", "γυψοσανίδα με ηχομόνωση, ≈220 m²", 10000]
+  ]],
+  ["Κουφώματα και τελειώματα", [
+    ["Κουφώματα αλουμινίου", "θερμοδιακοπή, low-e, μεγάλες συρόμενες, ≈70 m²", 27000],
+    ["Πόρτες", "εξώπορτα ασφαλείας, 12 εσωτερικές, γκαραζόπορτα 5,5 m μηχανοκίνητη", 9700],
+    ["Δάπεδα", "πλακάκι / ξύλο στο σπίτι, βιομηχανικό στο γκαράζ", 11100],
+    ["Ψευδοροφές και χρωματισμοί", "", 9500],
+    ["Τζάκι αερίου", "στεγανό, με ομοαξονική καμινάδα από τον ανατολικό τοίχο", 6500],
+    ["Μπάνια", "guest WC, μπάνιο παιδιών, en-suite", 20000],
+    ["Κουζίνα και ντουλάπες", "", 21000]
+  ]],
+  ["Η/Μ και ενέργεια", [
+    ["Θέρμανση και ψύξη", "αντλία θερμότητας, ενδοδαπέδια, ζεστό νερό, αερισμός με ανάκτηση", 25000],
+    ["Υδραυλικά και αποχετεύσεις", "", 9000],
+    ["Εγκατάσταση υγραερίου", "ερμάριο για 2 φιάλες 25 kg με αυτόματο εναλλάκτη, χαλκοσωλήνες προς εστίες και τζάκι, μελέτη, έλεγχος στεγανότητας", 1800],
+    ["Ηλεκτρολογικά, δίκτυα, αυτοματισμοί", "", 14000],
+    ["Φωτοβολταϊκά και μπαταρίες", "48 πάνελ ≈20 kWp, ≈20 kWh αποθήκευση", 22000],
+    ["Παροχές ΔΕΗ, νερού, αποχέτευσης", "", 4000]
+  ]],
+  ["Εξωτερικά", [
+    ["Πισίνα 3 × 8 m", "σκυρόδεμα, επένδυση, φίλτρα, φωτισμός", 30000],
+    ["Pool house", "12 m²", 12000],
+    ["Περιβάλλων χώρος", "περίφραξη, τοίχος αυλής, συρόμενη αυλόπορτα, ράμπα, πλακοστρώσεις, deck, κήπος", 35000]
+  ]]
+];
+const FEES = [
+  ["Μελέτες, άδεια, επίβλεψη μηχανικού", "αρχιτεκτονική, στατική, Η/Μ, ΚΕΝΑΚ", 18000],
+  ["Τέλη άδειας και κρατήσεις", "", 2000]
+];
+const CONTINGENCY = 0.08;
+const HOUSE_GROUPS = 3; // the first three groups are the house and garage
+
+const eur = v => Math.round(v).toLocaleString("el-GR") + " €";
+let table = "t2";
+function render() {
+  const rate = +document.getElementById("rate").value || 41;
+  let d1 = 0, d2 = 0, rows = "";
+  SPACES.forEach(s => {
+    const n1 = s.a * s.t1, n2 = s.a * s.t2; d1 += n1; d2 += n2;
+    rows += `<tr><td>${s.name}<small>${s.note}</small></td><td class="n">${s.a.toFixed(1)}</td><td class="n">${s.t1.toFixed(2)}</td><td class="n">${s.t2.toFixed(2)}</td><td class="n">${(table === "t1" ? n1 : n2).toFixed(1)}</td></tr>`;
+  });
+  d1 += EXTRA_DAYS; d2 += EXTRA_DAYS;
+  rows += `<tr><td>Περιβάλλων χώρος<small>Πίνακας 3, ίδιο και για τους δύο τρόπους</small></td><td class="n"></td><td class="n"></td><td class="n"></td><td class="n">${EXTRA_DAYS.toFixed(1)}</td></tr>`;
+  const days = table === "t1" ? d1 : d2, efka = days * rate, saved = (d1 - d2) * rate;
+  rows += `<tr class="tot"><td>Σύνολο ημερομισθίων</td><td class="n"></td><td class="n">${Math.round(d1)}</td><td class="n">${Math.round(d2)}</td><td class="n">${Math.round(days)}</td></tr>`;
+  rows += `<tr class="tot"><td>Εισφορές × ${rate} €</td><td class="n"></td><td class="n">${eur(d1 * rate)}</td><td class="n">${eur(d2 * rate)}</td><td class="n">${eur(efka)}</td></tr>`;
+  if (table === "t2") rows += `<tr><td colspan="5" class="save">Με τη σύμμικτη κατασκευή γλιτώνεις ${Math.round(d1 - d2)} ημερομίσθια, περίπου ${eur(saved)} σε εισφορές.</td></tr>`;
+  document.getElementById("efka").innerHTML = rows;
+
+  let b = "", build = 0, house = 0;
+  BUDGET.forEach(([g, items], gi) => {
+    const sum = items.reduce((s, it) => s + it[2], 0); build += sum; if (gi < HOUSE_GROUPS) house += sum;
+    b += `<tr class="sub"><td>${g}</td><td class="n">${eur(sum)}</td></tr>`;
+    items.forEach(([n, d, v]) => b += `<tr><td>${n}${d ? `<small>${d}</small>` : ""}</td><td class="n">${eur(v)}</td></tr>`);
+  });
+  b += `<tr class="tot"><td>Κατασκευή</td><td class="n">${eur(build)}</td></tr>`;
+  const fees = FEES.reduce((s, f) => s + f[2], 0), cont = build * CONTINGENCY;
+  b += `<tr class="sub"><td>Αμοιβές, τέλη, ένσημα</td><td class="n">${eur(fees + efka)}</td></tr>`;
+  FEES.forEach(([n, d, v]) => b += `<tr><td>${n}${d ? `<small>${d}</small>` : ""}</td><td class="n">${eur(v)}</td></tr>`);
+  b += `<tr><td>Ένσημα ΕΦΚΑ<small>${Math.round(days)} ημερομίσθια, ${table === "t2" ? "Πίνακας 2 (σύμμικτη)" : "Πίνακας 1Α (συμβατική)"}</small></td><td class="n">${eur(efka)}</td></tr>`;
+  b += `<tr><td>Απρόβλεπτα<small>${CONTINGENCY * 100}% της κατασκευής</small></td><td class="n">${eur(cont)}</td></tr>`;
+  const total = build + fees + efka + cont;
+  b += `<tr class="tot"><td>Σύνολο έργου</td><td class="n">${eur(total)}</td></tr>`;
+  document.getElementById("bud").innerHTML = b;
+
+  document.getElementById("k-total").textContent = eur(total);
+  document.getElementById("k-m2").textContent = eur(house / 179.1) + "/m²";
+  document.getElementById("k-efka").textContent = eur(efka);
+  document.getElementById("k-days").textContent = Math.round(days);
+}
+document.querySelectorAll(".seg button").forEach(btn => btn.addEventListener("click", () => {
+  table = btn.dataset.t;
+  document.querySelectorAll(".seg button").forEach(x => x.setAttribute("aria-pressed", x === btn ? "true" : "false"));
+  render();
+}));
+document.getElementById("rate").addEventListener("input", render);
+render();
+</script>
+<script src="../nav.js"></script>

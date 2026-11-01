@@ -2,6 +2,18 @@
 // The root plan.html / 3d.html / electrical.html hold v7, the last version with an electrical drawing.
 window.HOUSE_VERSIONS = [
   {
+    id: "v10",
+    date: "2026-11-01",
+    title: "Gas fireplace and hob on LPG cylinders",
+    hasCost: true,
+    changes: [
+      "Gas fireplace: sealed, balanced-flue unit venting straight out through the east wall, no chimney through the roof.",
+      "Gas hob in the kitchen run on the same wall.",
+      "Two 25 kg LPG cylinders with an automatic changeover in a ventilated cabinet in the east side passage, between the kitchen window and the fireplace; about 1.5 m of pipe to each appliance.",
+      "Rooms, outline and areas as in v9."
+    ]
+  },
+  {
     id: "v9",
     date: "2026-11-01",
     title: "Open kitchen and living, children's rooms together",
