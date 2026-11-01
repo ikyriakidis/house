@@ -2,6 +2,17 @@
 // The root plan.html / 3d.html / electrical.html hold v7, the last version with an electrical drawing.
 window.HOUSE_VERSIONS = [
   {
+    id: "v11",
+    date: "2026-11-01",
+    title: "One shared bathroom, shorter bedroom wing",
+    hasCost: true,
+    changes: [
+      "One shared bathroom by the foyer, for the children and for guests, instead of the guest WC and the children's shower room.",
+      "En-suite and walk-in closet move into the old shower room's place, so the west strip of the bedroom wing is 2 m shorter; the master bedroom keeps its size and gains a west window.",
+      "Heated area about 172 m² (v10: 179 m²)."
+    ]
+  },
+  {
     id: "v10",
     date: "2026-11-01",
     title: "Gas fireplace and hob on LPG cylinders",
